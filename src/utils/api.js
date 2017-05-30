@@ -1,40 +1,6 @@
 import axios from "axios";
 import format from "date-fns/format";
 
-// Fetch data -------------------------------------------------------------------------
-export const fetchObservedData = (protocol, station, temperature) => {
-  const params = {
-    sid: station.sid,
-    // you can change back this to 1980-08-01
-    sdate: `1980-${format(new Date(), "MM-DD")}`,
-    edate: format(new Date(), "YYYY-MM-DD"),
-    elems: [
-      {
-        name: "maxt",
-        interval: [1, 0, 0],
-        duration: "std",
-        season_start: "01-01",
-        reduce: `cnt_ge_${temperature}`
-      }
-    ]
-  };
-
-  // console.log(params);
-
-  return axios
-    .post(`${protocol}//data.rcc-acis.org/StnData`, params)
-    .then(res => {
-      if (!res.data.hasOwnProperty("error")) {
-        // res.data.data.map(e => console.log(e));
-        return res.data.data;
-      }
-      console.log(res.data.error);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
 // Projection 2040-2069 ---------------------------------------------------------------------
 export const fetchProjection2040 = (protocol, station, temperature) => {
   const params = {

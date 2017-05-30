@@ -9,36 +9,6 @@ import CustomLabels from "./CustomLabels";
 
 const COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
 
-// const RADIAN = Math.PI / 180;
-// const renderCustomizedLabel = ({
-//   cx,
-//   cy,
-//   startAngle,
-//   midAngle,
-//   endAngle,
-//   innerRadius,
-//   outerRadius,
-//   percent,
-//   index,
-//   payload
-// }) => {
-//   const radius = innerRadius + (outerRadius - innerRadius) * 0.3;
-//   const x = cx + radius * Math.cos(-midAngle * RADIAN);
-//   const y = cy + radius * Math.sin(-midAngle * RADIAN);
-//   console.log(startAngle, midAngle, endAngle);
-//   return (
-//     <text
-//       x={x}
-//       y={y}
-//       fill="white"
-//       textAnchor={x > cx ? "start" : "end"}
-//       dominantBaseline="central"
-//     >
-//       {`${(percent * 100).toFixed(0)}%`}
-//     </text>
-//   );
-// };
-
 const renderActiveShape = props => {
   const RADIAN = Math.PI / 180;
   const {
@@ -68,7 +38,7 @@ const renderActiveShape = props => {
     <g>
       <text x={cx} y={cy} dy={-8} textAnchor="middle" fill="#333">
         {/* {payload.name} */}
-        Observed
+        Projection
       </text>
       <Sector
         cx={cx}
@@ -117,9 +87,16 @@ const renderActiveShape = props => {
 
 @inject("store")
 @observer
-export default class Observed extends Component {
+export default class Projections extends Component {
   render() {
-    const { observed, observedIndex } = this.props.store.app;
+    const {
+      projection2040,
+      projection2040Index,
+      projection2070,
+      projection2070Index,
+      selectedProjection
+    } = this.props.store.app;
+    console.log(selectedProjection);
     const height = 300;
 
     const data = [
@@ -146,7 +123,11 @@ export default class Observed extends Component {
             data={data}
             cx={250}
             cy={height / 1.6}
-            activeIndex={observedIndex}
+            activeIndex={
+              selectedProjection === "projection2040"
+                ? projection2040Index
+                : projection2070Index
+            }
             activeShape={renderActiveShape}
             startAngle={220}
             endAngle={-40}
@@ -164,7 +145,11 @@ export default class Observed extends Component {
           // style={{ border: "1px solid green" }}
           width={600}
           height={height}
-          data={observed}
+          data={
+            selectedProjection === "projection2040"
+              ? projection2040
+              : projection2070
+          }
           // margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
         >
           <XAxis dataKey="year" tick={<CustomLabels />} />
@@ -184,13 +169,13 @@ export default class Observed extends Component {
               }
             ]}
           />
-          <Bar dataKey="days above">
-            {observed.map((e, i) => {
-              if (i === observed.length - 1) {
+          <Bar dataKey="days above" fill="#ddd">
+            {/* {projection2040.map((e, i) => {
+              if (i === projection2040.length - 1) {
                 return <Cell key={i} fill={e.barColor} />;
               }
               return <Cell key={i} fill="#ddd" />;
-            })}
+            })} */}
           </Bar>
         </BarChart>
       </div>

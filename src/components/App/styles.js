@@ -17,3 +17,8 @@ export const Menu = styled.section`
   align-items: center;
   border: 1px solid #eee;
 `;
+
+export const Header = styled.h2`
+  font-size: 1.4em;
+  letter-spacing: 1px;
+`;
