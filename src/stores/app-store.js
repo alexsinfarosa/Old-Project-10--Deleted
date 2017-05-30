@@ -3,6 +3,7 @@ import { stations } from "stations";
 import { jStat } from "jStat";
 import format from "date-fns/format";
 import axios from "axios";
+import { closest } from "utils";
 
 // import Uniq from "lodash/uniq";
 
@@ -67,23 +68,22 @@ export default class AppStore {
   }
 
   @computed get ObservedIndex() {
-    const values = this.observedData.map(year => Number(year[1]));
-    const quantiles = jStat.quantiles(values, [0.25, 0.5, 0.75, 1]);
-    const d = this.daysAboveLastYear;
-    const min = Math.min(...values);
-    const max = Math.max(...values);
+    if (this.observedData.length > 0) {
+      const values = this.observedData.map(year => Number(year[1]));
+      const min = Math.min(...values);
+      const quantiles = jStat.quantiles(values, [0.25, 0.5, 0.75, 1]);
+      const minPlusQuantiles = [min, ...quantiles];
+      const sorted = [...minPlusQuantiles];
+      const d = this.daysAboveLastYear;
+      // const quantile = closest(quantiles, d);
+      const quantile = sorted.sort(
+        (a, b) => Math.abs(d - a) - Math.abs(d - b)
+      )[0];
+      const index = minPlusQuantiles.indexOf(quantile);
 
-    let index;
-    if (d >= min && d < quantiles[0]) {
-      index = 0;
-    } else if (d >= quantiles[0] && d < quantiles[1]) {
-      index = 1;
-    } else if (d >= quantiles[1] && d < quantiles[2]) {
-      index = 2;
-    } else if (d >= quantiles[2] && d < quantiles[3]) {
-      index = 3;
+      console.log(values, d, minPlusQuantiles, quantile, index);
+      return index;
     }
-    return index;
   }
 
   @computed get observed() {
@@ -95,7 +95,6 @@ export default class AppStore {
       });
     });
 
-    results.map(e => console.log(e));
     return results;
   }
 
