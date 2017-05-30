@@ -75,7 +75,6 @@ export default class AppStore {
 
   @computed get daysAboveLastYear() {
     const values = this.observedData.map(year => Number(year[1]));
-    console.log(values[values.length - 1]);
     return values[values.length - 1];
   }
 
@@ -85,16 +84,64 @@ export default class AppStore {
       const min = Math.min(...values);
       const quantiles = jStat.quantiles(values, [0.25, 0.5, 0.75, 1]);
       const minPlusQuantiles = [min, ...quantiles];
-      const sorted = [...minPlusQuantiles];
       const d = this.daysAboveLastYear;
-      // const quantile = closest(quantiles, d);
-      const quantile = sorted.sort(
-        (a, b) => Math.abs(d - a) - Math.abs(d - b)
-      )[0];
-      const index = minPlusQuantiles.indexOf(quantile);
 
-      console.log(values.toString(), d, minPlusQuantiles, quantile, index);
-      return index;
+      let results = [];
+      let barColor = "";
+      let message = "";
+
+      const regions = [...new Set(minPlusQuantiles)];
+      console.log(minPlusQuantiles, regions);
+      if (regions.length === 5) {
+        if (d < min) {
+          barColor = "#292F36";
+          message = "Not Observed";
+        } else if (d >= minPlusQuantiles[0] && d < minPlusQuantiles[1]) {
+          barColor = "#0088FE";
+          message = "Below";
+        } else if (d >= minPlusQuantiles[1] && d < minPlusQuantiles[2]) {
+          barColor = "#7FB069";
+          message = "Slightly Below";
+        } else if (d >= minPlusQuantiles[2] && d < minPlusQuantiles[3]) {
+          barColor = "#FFBB28";
+          message = "Slightly Above";
+        } else if (d >= minPlusQuantiles[3] && d < minPlusQuantiles[4]) {
+          barColor = "#E63B2E";
+          message = "Above";
+        }
+      }
+
+      // min is the same as the 25th percentile
+      if (regions.length === 4) {
+        if (d < min) {
+          barColor = "#292F36";
+          message = "Not Observed";
+        } else if (d >= minPlusQuantiles[0] && d < minPlusQuantiles[1]) {
+          barColor = "#0088FE";
+          message = "Below";
+        } else if (d >= minPlusQuantiles[1] && d < minPlusQuantiles[2]) {
+          barColor = "#7FB069";
+          message = "Slightly Below";
+        } else if (d >= minPlusQuantiles[2] && d < minPlusQuantiles[3]) {
+          barColor = "#FFBB28";
+          message = "Slightly Above";
+        } else if (d >= minPlusQuantiles[3] && d < minPlusQuantiles[4]) {
+          barColor = "#E63B2E";
+          message = "Above";
+        }
+      }
+
+      this.observedData.forEach(d => {
+        results.push({
+          year: format(d[0], "YYYY"),
+          "days above": Number(d[1]),
+          barColor: barColor,
+          // index: index,
+          message: message
+        });
+      });
+
+      return results;
     }
   }
 
@@ -102,6 +149,7 @@ export default class AppStore {
     let results = [];
     let barColor = "";
     const index = this.observedIndex;
+
     if (index === 0) {
       barColor = "#292F36";
     } else if (index === 1) {
@@ -202,7 +250,8 @@ export default class AppStore {
       results.push({
         year: format(d[0], "YYYY"),
         "days above": Number(d[1]),
-        barColor: barColor
+        barColor: barColor,
+        daysAboveLastYear: this.daysAboveLastYear
       });
     });
 

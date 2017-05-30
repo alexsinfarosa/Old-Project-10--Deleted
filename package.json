@@ -1,6 +1,9 @@
 {
   "name": "gauge",
   "version": "0.1.0",
+  "homepage": "https://alexsinfarosa.github.io/T-widget/",
+  "description": "NEWA temperature widget",
+  "author": "alexsinfarosa <as898@cornell.edu>",
   "private": true,
   "dependencies": {
     "antd": "^2.10.2",
@@ -64,7 +67,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "jest": {
     "collectCoverageFrom": [

@@ -2,7 +2,15 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
 import { PieChart, Pie, Sector, Cell } from "recharts";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import {
+  ComposedChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Line
+} from "recharts";
 
 // components
 import CustomLabels from "./CustomLabels";
@@ -96,7 +104,7 @@ export default class Projections extends Component {
       projection2070Index,
       selectedProjection
     } = this.props.store.app;
-    console.log(selectedProjection);
+
     const height = 300;
 
     const data = [
@@ -141,7 +149,7 @@ export default class Projections extends Component {
           </Pie>
         </PieChart>
 
-        <BarChart
+        <ComposedChart
           // style={{ border: "1px solid green" }}
           width={600}
           height={height}
@@ -177,7 +185,13 @@ export default class Projections extends Component {
               return <Cell key={i} fill="#ddd" />;
             })} */}
           </Bar>
-        </BarChart>
+          <Line
+            type="monotone"
+            dataKey="daysAboveLastYear"
+            stroke="#8884d8"
+            dot={false}
+          />
+        </ComposedChart>
       </div>
     );
   }
