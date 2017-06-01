@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 // components
 import CustomLabels from "./CustomLabels";
 
-const COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
+import { Spin } from "antd";
 
 // const RADIAN = Math.PI / 180;
 // const renderCustomizedLabel = ({
@@ -119,80 +119,122 @@ const renderActiveShape = props => {
 @observer
 export default class Observed extends Component {
   render() {
-    const { observed, observedIndex } = this.props.store.app;
+    const { observed, observedIndex, observedSectors } = this.props.store.app;
     const height = 300;
 
-    const data = [
-      { name: "Not Observed", value: 200 },
-      { name: "Below", value: 200 },
-      { name: "Slightly Below", value: 200 },
-      { name: "Slightly Above", value: 200 },
-      { name: "Above", value: 200 }
-    ];
+    let data = [];
+    let COLORS;
+    if (observedSectors.length === 5) {
+      data = [
+        { name: "Not Observed", value: 2 },
+        { name: "Below", value: 2 },
+        { name: "Slightly Below", value: 2 },
+        { name: "Slightly Above", value: 2 },
+        { name: "Above", value: 2 }
+      ];
+      COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
+    }
 
-    const cell = data.map((entry, index) => {
-      return <Cell key={index} fill={COLORS[index % COLORS.length]} />;
-    });
+    if (observedSectors.length === 4) {
+      data = [
+        { name: "Not Observed", value: 2.5 },
+        { name: "Below", value: 2.5 },
+        { name: "Normal", value: 2.5 },
+        { name: "Above", value: 2.5 }
+      ];
+      COLORS = ["#292F36", "#0088FE", "#7FB069", "#E63B2E"];
+    }
+
+    if (observedSectors.length === 3) {
+      data = [
+        { name: "Not Observed", value: 3 },
+        { name: "Slightly Below", value: 3 },
+        { name: "Slightly Above", value: 3 }
+      ];
+      COLORS = ["#292F36", "#0088FE", "#7FB069"];
+    }
+
+    if (observedSectors.length === 2) {
+      data = [{ name: "Normal", value: 500 }, { name: "Above", value: 500 }];
+      COLORS = ["#7FB069", "#E63B2E"];
+    }
+
+    if (observedSectors.length === 1) {
+      data = [{ name: "Not Observed", value: 1 }];
+      COLORS = ["#292F36"];
+    }
+
+    let cell = null;
+    if (data.length > 0) {
+      cell = data.map((entry, index) => {
+        return <Cell key={index} fill={COLORS[index % COLORS.length]} />;
+      });
+    }
 
     return (
-      <div style={{ display: "flex", justifyContent: "flex-start" }}>
-        <PieChart
-          // style={{ border: "1px solid red" }}
-          width={500}
-          height={height}
-          onMouseEnter={this.onPieEnter}
-        >
-          <Pie
-            data={data}
-            cx={250}
-            cy={height / 1.6}
-            activeIndex={observedIndex}
-            activeShape={renderActiveShape}
-            startAngle={220}
-            endAngle={-40}
-            labelLine={false}
-            // label={renderCustomizedLabel}
-            outerRadius={110}
-            innerRadius={90}
-            paddingAngle={2}
-          >
-            {cell}
-          </Pie>
-        </PieChart>
+      <div>
+        {data.length > 0
+          ? <div style={{ display: "flex", justifyContent: "flex-start" }}>
+              <PieChart
+                // style={{ border: "1px solid red" }}
+                width={500}
+                height={height}
+                onMouseEnter={this.onPieEnter}
+              >
+                <Pie
+                  data={data}
+                  cx={250}
+                  cy={height / 1.6}
+                  activeIndex={observedIndex}
+                  activeShape={renderActiveShape}
+                  startAngle={220}
+                  endAngle={-40}
+                  labelLine={false}
+                  // label={renderCustomizedLabel}
+                  outerRadius={110}
+                  innerRadius={90}
+                  paddingAngle={2}
+                >
+                  {cell}
+                </Pie>
+                <Legend />
+              </PieChart>
 
-        <BarChart
-          // style={{ border: "1px solid green" }}
-          width={600}
-          height={height}
-          data={observed}
-          // margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
-        >
-          <XAxis dataKey="year" tick={<CustomLabels />} />
-          <YAxis allowDecimals={false} />
-          <Tooltip />
-          <Legend
-            verticalAlign="top"
-            align="right"
-            height={36}
-            iconSize={18}
-            iconType="rect"
-            payload={[
-              {
-                value: "Days above selected temperature",
-                type: "rect",
-                color: "#ddd"
-              }
-            ]}
-          />
-          <Bar dataKey="days above">
-            {observed.map((e, i) => {
-              if (i === observed.length - 1) {
-                return <Cell key={i} fill={e.barColor} />;
-              }
-              return <Cell key={i} fill="#ddd" />;
-            })}
-          </Bar>
-        </BarChart>
+              <BarChart
+                // style={{ border: "1px solid green" }}
+                width={600}
+                height={height}
+                data={observed}
+                // margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
+              >
+                <XAxis dataKey="year" tick={<CustomLabels />} />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Legend
+                  verticalAlign="top"
+                  align="right"
+                  height={36}
+                  iconSize={18}
+                  iconType="rect"
+                  payload={[
+                    {
+                      value: "Days above selected temperature",
+                      type: "rect",
+                      color: "#ddd"
+                    }
+                  ]}
+                />
+                <Bar dataKey="days above">
+                  {observed.map((e, i) => {
+                    if (i === observed.length - 1) {
+                      return <Cell key={i} fill={COLORS[observedIndex]} />;
+                    }
+                    return <Cell key={i} fill="#ddd" />;
+                  })}
+                </Bar>
+              </BarChart>
+            </div>
+          : <Spin />}
       </div>
     );
   }

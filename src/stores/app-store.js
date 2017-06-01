@@ -78,97 +78,68 @@ export default class AppStore {
     return values[values.length - 1];
   }
 
+  @computed get observedSectors() {
+    const values = this.observedData.map(year => Number(year[1]));
+    let quantiles = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+    return [...new Set(quantiles)];
+  }
+
   @computed get observedIndex() {
     if (this.observedData.length > 0) {
       const values = this.observedData.map(year => Number(year[1]));
-      const min = Math.min(...values);
-      const quantiles = jStat.quantiles(values, [0.25, 0.5, 0.75, 1]);
-      const minPlusQuantiles = [min, ...quantiles];
       const d = this.daysAboveLastYear;
+      let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+      let sectors = [...new Set(Q)];
 
-      let results = [];
-      let barColor = "";
-      let message = "";
-
-      const regions = [...new Set(minPlusQuantiles)];
-      console.log(minPlusQuantiles, regions);
-      if (regions.length === 5) {
-        if (d < min) {
-          barColor = "#292F36";
-          message = "Not Observed";
-        } else if (d >= minPlusQuantiles[0] && d < minPlusQuantiles[1]) {
-          barColor = "#0088FE";
-          message = "Below";
-        } else if (d >= minPlusQuantiles[1] && d < minPlusQuantiles[2]) {
-          barColor = "#7FB069";
-          message = "Slightly Below";
-        } else if (d >= minPlusQuantiles[2] && d < minPlusQuantiles[3]) {
-          barColor = "#FFBB28";
-          message = "Slightly Above";
-        } else if (d >= minPlusQuantiles[3] && d < minPlusQuantiles[4]) {
-          barColor = "#E63B2E";
-          message = "Above";
-        }
+      if (sectors.length === 5) {
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+        if (d > Q[2] && d <= Q[3]) return 3;
+        if (d > Q[3] && d <= Q[4]) return 4;
       }
 
-      // min is the same as the 25th percentile
-      if (regions.length === 4) {
-        if (d < min) {
-          barColor = "#292F36";
-          message = "Not Observed";
-        } else if (d >= minPlusQuantiles[0] && d < minPlusQuantiles[1]) {
-          barColor = "#0088FE";
-          message = "Below";
-        } else if (d >= minPlusQuantiles[1] && d < minPlusQuantiles[2]) {
-          barColor = "#7FB069";
-          message = "Slightly Below";
-        } else if (d >= minPlusQuantiles[2] && d < minPlusQuantiles[3]) {
-          barColor = "#FFBB28";
-          message = "Slightly Above";
-        } else if (d >= minPlusQuantiles[3] && d < minPlusQuantiles[4]) {
-          barColor = "#E63B2E";
-          message = "Above";
-        }
+      if (sectors.length === 4) {
+        Q = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+        if (d > Q[2] && d <= Q[3]) return 3;
       }
 
-      this.observedData.forEach(d => {
-        results.push({
-          year: format(d[0], "YYYY"),
-          "days above": Number(d[1]),
-          barColor: barColor,
-          // index: index,
-          message: message
-        });
-      });
+      if (sectors.length === 3) {
+        Q = jStat.quantiles(values, [0, 0.5, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+      }
 
-      return results;
+      if (sectors.length === 2) {
+        Q = jStat.quantiles(values, [0.5, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0]) return 1;
+      }
+
+      if (sectors.length === 1) {
+        Q = jStat.quantiles(values, [1]);
+        console.log(Q, d);
+        return 0;
+      }
     }
   }
 
   @computed get observed() {
     let results = [];
-    let barColor = "";
-    const index = this.observedIndex;
-
-    if (index === 0) {
-      barColor = "#292F36";
-    } else if (index === 1) {
-      barColor = "#0088FE";
-    } else if (index === 2) {
-      barColor = "#7FB069";
-    } else if (index === 3) {
-      barColor = "#FFBB28";
-    } else if (index === 4) {
-      barColor = "#E63B2E";
-    }
     this.observedData.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
-        "days above": Number(d[1]),
-        barColor: barColor
+        "days above": Number(d[1])
       });
     });
-
     return results;
   }
 
@@ -212,46 +183,66 @@ export default class AppStore {
       });
   };
 
+  @computed get projection2040Sectors() {
+    const values = this.projectedData2040.map(year => Number(year[1]));
+    let quantiles = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+    return [...new Set(quantiles)];
+  }
+
   @computed get projection2040Index() {
     if (this.projectedData2040.length > 0) {
       const values = this.projectedData2040.map(year => Number(year[1]));
-      const min = Math.min(...values);
-      const quantiles = jStat.quantiles(values, [0.25, 0.5, 0.75, 1]);
-      const minPlusQuantiles = [min, ...quantiles];
-      const sorted = [...minPlusQuantiles];
       const d = this.daysAboveLastYear;
-      // const quantile = closest(quantiles, d);
-      const quantile = sorted.sort(
-        (a, b) => Math.abs(d - a) - Math.abs(d - b)
-      )[0];
-      const index = minPlusQuantiles.indexOf(quantile);
+      let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+      let sectors = [...new Set(Q)];
 
-      console.log(values.toString(), d, minPlusQuantiles, quantile, index);
-      return index;
+      if (sectors.length === 5) {
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+        if (d > Q[2] && d <= Q[3]) return 3;
+        if (d > Q[3] && d <= Q[4]) return 4;
+      }
+
+      if (sectors.length === 4) {
+        Q = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+        if (d > Q[2] && d <= Q[3]) return 3;
+      }
+
+      if (sectors.length === 3) {
+        Q = jStat.quantiles(values, [0, 0.5, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+      }
+
+      if (sectors.length === 2) {
+        Q = jStat.quantiles(values, [0.5, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0]) return 1;
+      }
+
+      if (sectors.length === 1) {
+        Q = jStat.quantiles(values, [1]);
+        console.log(Q, d);
+        return 0;
+      }
     }
   }
 
   @computed get projection2040() {
     let results = [];
-    let barColor = "";
-    const index = this.projection2040Index;
-    if (index === 0) {
-      barColor = "#292F36";
-    } else if (index === 1) {
-      barColor = "#0088FE";
-    } else if (index === 2) {
-      barColor = "#7FB069";
-    } else if (index === 3) {
-      barColor = "#FFBB28";
-    } else if (index === 4) {
-      barColor = "#E63B2E";
-    }
     this.projectedData2040.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
-        "days above": Number(d[1]),
-        barColor: barColor,
-        daysAboveLastYear: this.daysAboveLastYear
+        "days above": Number(d[1])
       });
     });
 
@@ -298,48 +289,68 @@ export default class AppStore {
       });
   };
 
+  @computed get projection2070Sectors() {
+    const values = this.projectedData2070.map(year => Number(year[1]));
+    let quantiles = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+    return [...new Set(quantiles)];
+  }
+
   @computed get projection2070Index() {
     if (this.projectedData2070.length > 0) {
       const values = this.projectedData2070.map(year => Number(year[1]));
-      const min = Math.min(...values);
-      const quantiles = jStat.quantiles(values, [0.25, 0.5, 0.75, 1]);
-      const minPlusQuantiles = [min, ...quantiles];
-      const sorted = [...minPlusQuantiles];
       const d = this.daysAboveLastYear;
-      // const quantile = closest(quantiles, d);
-      const quantile = sorted.sort(
-        (a, b) => Math.abs(d - a) - Math.abs(d - b)
-      )[0];
-      const index = minPlusQuantiles.indexOf(quantile);
+      let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+      let sectors = [...new Set(Q)];
 
-      console.log(values.toString(), d, minPlusQuantiles, quantile, index);
-      return index;
+      if (sectors.length === 5) {
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+        if (d > Q[2] && d <= Q[3]) return 3;
+        if (d > Q[3] && d <= Q[4]) return 4;
+      }
+
+      if (sectors.length === 4) {
+        Q = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+        if (d > Q[2] && d <= Q[3]) return 3;
+      }
+
+      if (sectors.length === 3) {
+        Q = jStat.quantiles(values, [0, 0.5, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0] && d <= Q[1]) return 1;
+        if (d > Q[1] && d <= Q[2]) return 2;
+      }
+
+      if (sectors.length === 2) {
+        Q = jStat.quantiles(values, [0.5, 1]);
+        console.log(Q, d);
+        if (d <= Q[0]) return 0;
+        if (d > Q[0]) return 1;
+      }
+
+      if (sectors.length === 1) {
+        Q = jStat.quantiles(values, [1]);
+        console.log(Q, d);
+        return 0;
+      }
     }
   }
 
   @computed get projection2070() {
     let results = [];
-    let barColor = "";
-    const index = this.projection2070Index;
-    if (index === 0) {
-      barColor = "#292F36";
-    } else if (index === 1) {
-      barColor = "#0088FE";
-    } else if (index === 2) {
-      barColor = "#7FB069";
-    } else if (index === 3) {
-      barColor = "#FFBB28";
-    } else if (index === 4) {
-      barColor = "#E63B2E";
-    }
     this.projectedData2070.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
-        "days above": Number(d[1]),
-        barColor: barColor
+        "days above": Number(d[1])
       });
     });
-
     return results;
   }
 }

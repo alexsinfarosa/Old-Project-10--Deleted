@@ -15,8 +15,6 @@ import {
 // components
 import CustomLabels from "./CustomLabels";
 
-const COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
-
 const renderActiveShape = props => {
   const RADIAN = Math.PI / 180;
   const {
@@ -98,26 +96,109 @@ const renderActiveShape = props => {
 export default class Projections extends Component {
   render() {
     const {
-      projection2040,
-      projection2040Index,
-      projection2070,
+      selectedProjection,
+      projection2070Sectors,
       projection2070Index,
-      selectedProjection
+      projection2070,
+      projection2040Sectors,
+      projection2040Index,
+      projection2040
     } = this.props.store.app;
 
     const height = 300;
 
-    const data = [
-      { name: "Not Observed", value: 200 },
-      { name: "Below", value: 200 },
-      { name: "Slightly Below", value: 200 },
-      { name: "Slightly Above", value: 200 },
-      { name: "Above", value: 200 }
-    ];
+    let data = [];
+    let COLORS;
+    if (selectedProjection === "projection2040") {
+      if (projection2040Sectors.length === 5) {
+        data = [
+          { name: "Not Observed", value: 2 },
+          { name: "Below", value: 2 },
+          { name: "Slightly Below", value: 2 },
+          { name: "Slightly Above", value: 2 },
+          { name: "Above", value: 2 }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
+      }
 
-    const cell = data.map((entry, index) => {
-      return <Cell key={index} fill={COLORS[index % COLORS.length]} />;
-    });
+      if (projection2040Sectors.length === 4) {
+        data = [
+          { name: "Not Observed", value: 2.5 },
+          { name: "Below", value: 2.5 },
+          { name: "Normal", value: 2.5 },
+          { name: "Above", value: 2.5 }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069", "#E63B2E"];
+      }
+
+      if (projection2040Sectors.length === 3) {
+        data = [
+          { name: "Not Observed", value: 3 },
+          { name: "Slightly Below", value: 3 },
+          { name: "Slightly Above", value: 3 }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069"];
+      }
+
+      if (projection2040Sectors.length === 2) {
+        data = [{ name: "Normal", value: 500 }, { name: "Above", value: 500 }];
+        COLORS = ["#7FB069", "#E63B2E"];
+      }
+
+      if (projection2040Sectors.length === 1) {
+        data = [{ name: "Not Observed", value: 1 }];
+        COLORS = ["#292F36"];
+      }
+    }
+
+    if (selectedProjection === "projection2070") {
+      if (projection2070Sectors.length === 5) {
+        data = [
+          { name: "Not Observed", value: 2 },
+          { name: "Below", value: 2 },
+          { name: "Slightly Below", value: 2 },
+          { name: "Slightly Above", value: 2 },
+          { name: "Above", value: 2 }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
+      }
+
+      if (projection2070Sectors.length === 4) {
+        data = [
+          { name: "Not Observed", value: 2.5 },
+          { name: "Below", value: 2.5 },
+          { name: "Normal", value: 2.5 },
+          { name: "Above", value: 2.5 }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069", "#E63B2E"];
+      }
+
+      if (projection2070Sectors.length === 3) {
+        data = [
+          { name: "Not Observed", value: 3 },
+          { name: "Slightly Below", value: 3 },
+          { name: "Slightly Above", value: 3 }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069"];
+      }
+
+      if (projection2070Sectors.length === 2) {
+        data = [{ name: "Normal", value: 500 }, { name: "Above", value: 500 }];
+        COLORS = ["#7FB069", "#E63B2E"];
+      }
+
+      if (projection2070Sectors.length === 1) {
+        data = [{ name: "Not Observed", value: 1 }];
+        COLORS = ["#292F36"];
+      }
+    }
+
+    let cell = null;
+    if (data.length > 0) {
+      cell = data.map((entry, index) => {
+        return <Cell key={index} fill={COLORS[index % COLORS.length]} />;
+      });
+    }
 
     return (
       <div style={{ display: "flex", justifyContent: "flex-start" }}>
@@ -147,6 +228,7 @@ export default class Projections extends Component {
           >
             {cell}
           </Pie>
+          <Legend />
         </PieChart>
 
         <ComposedChart
