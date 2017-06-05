@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { inject, observer } from "mobx-react";
-import { stations } from "stations";
-import { Radio } from "antd";
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { stations } from 'stations';
+import { Radio } from 'antd';
 
-@inject("store")
+@inject('store')
 @observer
 class AppMenu extends Component {
   onChange = e => {

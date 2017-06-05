@@ -1,8 +1,8 @@
-import { observable, action, computed } from "mobx";
-import { stations } from "stations";
-import { jStat } from "jStat";
-import format from "date-fns/format";
-import axios from "axios";
+import { observable, action, computed } from 'mobx';
+import { stations } from 'stations';
+import { jStat } from 'jStat';
+import format from 'date-fns/format';
+import axios from 'axios';
 
 // import Uniq from "lodash/uniq";
 
@@ -13,43 +13,46 @@ export default class AppStore {
   @observable isLoading = false;
   @action setIsLoading = d => (this.isLoading = d);
 
-  @observable selectedProjection = "projection2040";
+  @observable selectedProjection = 'projection2040';
   @action setProjection = d => (this.selectedProjection = d);
 
   // Stations -----------------------------------------------------------------------
-  @observable station = JSON.parse(localStorage.getItem("gauge-stations")) ||
+  @observable station = JSON.parse(localStorage.getItem('gauge-stations')) ||
     stations[0];
   @action setStation = d => {
-    localStorage.removeItem("gauge-stations");
+    localStorage.removeItem('gauge-stations');
     this.station = stations.find(s => s.name === d);
-    localStorage.setItem("gauge-stations", JSON.stringify(this.station));
+    localStorage.setItem('gauge-stations', JSON.stringify(this.station));
   };
 
   // Slider -------------------------------------------------------------------------
-  @observable temperature = JSON.parse(localStorage.getItem("temperature")) ||
+  @observable temperature = JSON.parse(localStorage.getItem('temperature')) ||
     75;
   @action setTemperature = d => {
     this.temperature = d;
-    localStorage.setItem("temperature", JSON.stringify(this.temperature));
+    localStorage.setItem('temperature', JSON.stringify(this.temperature));
   };
 
   // Observed ----------------------------------------------------------------------
   @observable observedData = [];
-  @action setObservedData = d => (this.observedData = d);
+  @action setObservedData = d => {
+    this.observedData.clear();
+    this.observedData = d;
+  };
 
   @action loadObservedData = () => {
     this.setIsLoading(true);
     const params = {
       sid: this.station.sid,
       // you can change back this to 1980-08-01
-      sdate: `1980-${format(new Date(), "MM-DD")}`,
-      edate: format(new Date(), "YYYY-MM-DD"),
+      sdate: `1980-${format(new Date(), 'MM-DD')}`,
+      edate: format(new Date(), 'YYYY-MM-DD'),
       elems: [
         {
-          name: "maxt",
+          name: 'maxt',
           interval: [1, 0, 0],
-          duration: "std",
-          season_start: "01-01",
+          duration: 'std',
+          season_start: '01-01',
           reduce: `cnt_ge_${this.temperature}`
         }
       ]
@@ -60,7 +63,7 @@ export default class AppStore {
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        if (!res.data.hasOwnProperty("error")) {
+        if (!res.data.hasOwnProperty('error')) {
           // res.data.data.map(e => console.log(e));
           this.setObservedData(res.data.data);
           this.setIsLoading(false);
@@ -73,18 +76,21 @@ export default class AppStore {
       });
   };
 
-  @computed get daysAboveLastYear() {
+  @computed
+  get daysAboveLastYear() {
     const values = this.observedData.map(year => Number(year[1]));
     return values[values.length - 1];
   }
 
-  @computed get observedSectors() {
+  @computed
+  get observedSectors() {
     const values = this.observedData.map(year => Number(year[1]));
     let quantiles = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
     return [...new Set(quantiles)];
   }
 
-  @computed get observedIndex() {
+  @computed
+  get observedIndex() {
     if (this.observedData.length > 0) {
       const values = this.observedData.map(year => Number(year[1]));
       const d = this.daysAboveLastYear;
@@ -132,12 +138,13 @@ export default class AppStore {
     }
   }
 
-  @computed get observed() {
+  @computed
+  get observed() {
     let results = [];
     this.observedData.forEach(d => {
       results.push({
-        year: format(d[0], "YYYY"),
-        "days above": Number(d[1])
+        year: format(d[0], 'YYYY'),
+        'days above': Number(d[1])
       });
     });
     return results;
@@ -145,21 +152,24 @@ export default class AppStore {
 
   // Projection 2040-2069 ----------------------------------------------------------
   @observable projectedData2040 = [];
-  @action setProjectedData2040 = d => (this.projectedData2040 = d);
+  @action setProjectedData2040 = d => {
+    this.projectedData2040.clear();
+    this.projectedData2040 = d;
+  };
 
   @action loadProjection2040 = () => {
     this.setIsLoading(true);
     const params = {
       loc: `${this.station.lon}, ${this.station.lat}`,
-      sdate: `2040-${format(new Date(), "MM-DD")}`,
-      edate: `2069-${format(new Date(), "MM-DD")}`,
+      sdate: `2040-${format(new Date(), 'MM-DD')}`,
+      edate: `2069-${format(new Date(), 'MM-DD')}`,
       grid: 23,
       elems: [
         {
-          name: "maxt",
+          name: 'maxt',
           interval: [1, 0, 0],
-          duration: "std",
-          season_start: "01-01",
+          duration: 'std',
+          season_start: '01-01',
           reduce: `cnt_ge_${this.temperature}`
         }
       ]
@@ -170,7 +180,7 @@ export default class AppStore {
     return axios
       .post(`${this.protocol}//grid.rcc-acis.org/GridData`, params)
       .then(res => {
-        if (!res.data.hasOwnProperty("error")) {
+        if (!res.data.hasOwnProperty('error')) {
           // return res.data.data;
           this.setProjectedData2040(res.data.data);
           this.setIsLoading(false);
@@ -183,13 +193,15 @@ export default class AppStore {
       });
   };
 
-  @computed get projection2040Sectors() {
+  @computed
+  get projection2040Sectors() {
     const values = this.projectedData2040.map(year => Number(year[1]));
     let quantiles = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
     return [...new Set(quantiles)];
   }
 
-  @computed get projection2040Index() {
+  @computed
+  get projection2040Index() {
     if (this.projectedData2040.length > 0) {
       const values = this.projectedData2040.map(year => Number(year[1]));
       const d = this.daysAboveLastYear;
@@ -237,12 +249,13 @@ export default class AppStore {
     }
   }
 
-  @computed get projection2040() {
+  @computed
+  get projection2040() {
     let results = [];
     this.projectedData2040.forEach(d => {
       results.push({
-        year: format(d[0], "YYYY"),
-        "days above": Number(d[1])
+        year: format(d[0], 'YYYY'),
+        'days above': Number(d[1])
       });
     });
 
@@ -251,21 +264,24 @@ export default class AppStore {
 
   // Projection 2070-2099 ----------------------------------------------------------
   @observable projectedData2070 = [];
-  @action setProjectedData2070 = d => (this.projectedData2070 = d);
+  @action setProjectedData2070 = d => {
+    this.projectedData2070.clear();
+    this.projectedData2070 = d;
+  };
 
   @action loadProjection2070 = () => {
     this.setIsLoading(true);
     const params = {
       loc: `${this.station.lon}, ${this.station.lat}`,
-      sdate: `2070-${format(new Date(), "MM-DD")}`,
-      edate: `2099-${format(new Date(), "MM-DD")}`,
+      sdate: `2070-${format(new Date(), 'MM-DD')}`,
+      edate: `2099-${format(new Date(), 'MM-DD')}`,
       grid: 23,
       elems: [
         {
-          name: "maxt",
+          name: 'maxt',
           interval: [1, 0, 0],
-          duration: "std",
-          season_start: "01-01",
+          duration: 'std',
+          season_start: '01-01',
           reduce: `cnt_ge_${this.temperature}`
         }
       ]
@@ -276,7 +292,7 @@ export default class AppStore {
     return axios
       .post(`${this.protocol}//grid.rcc-acis.org/GridData`, params)
       .then(res => {
-        if (!res.data.hasOwnProperty("error")) {
+        if (!res.data.hasOwnProperty('error')) {
           // return res.data.data;
           this.setProjectedData2070(res.data.data);
           this.setIsLoading(false);
@@ -289,13 +305,15 @@ export default class AppStore {
       });
   };
 
-  @computed get projection2070Sectors() {
+  @computed
+  get projection2070Sectors() {
     const values = this.projectedData2070.map(year => Number(year[1]));
     let quantiles = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
     return [...new Set(quantiles)];
   }
 
-  @computed get projection2070Index() {
+  @computed
+  get projection2070Index() {
     if (this.projectedData2070.length > 0) {
       const values = this.projectedData2070.map(year => Number(year[1]));
       const d = this.daysAboveLastYear;
@@ -343,12 +361,13 @@ export default class AppStore {
     }
   }
 
-  @computed get projection2070() {
+  @computed
+  get projection2070() {
     let results = [];
     this.projectedData2070.forEach(d => {
       results.push({
-        year: format(d[0], "YYYY"),
-        "days above": Number(d[1])
+        year: format(d[0], 'YYYY'),
+        'days above': Number(d[1])
       });
     });
     return results;
