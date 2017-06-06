@@ -1,43 +1,43 @@
-import React, { Component } from "react";
-import { inject, observer } from "mobx-react";
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
 
-import { PieChart, Pie, Sector, Cell } from "recharts";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Sector, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 // components
-import CustomLabels from "./CustomLabels";
+import CustomLabels from './CustomLabels';
 
-import { Spin } from "antd";
+import { Spin } from 'antd';
 
-// const RADIAN = Math.PI / 180;
-// const renderCustomizedLabel = ({
-//   cx,
-//   cy,
-//   startAngle,
-//   midAngle,
-//   endAngle,
-//   innerRadius,
-//   outerRadius,
-//   percent,
-//   index,
-//   payload
-// }) => {
-//   const radius = innerRadius + (outerRadius - innerRadius) * 0.3;
-//   const x = cx + radius * Math.cos(-midAngle * RADIAN);
-//   const y = cy + radius * Math.sin(-midAngle * RADIAN);
-//   console.log(startAngle, midAngle, endAngle);
-//   return (
-//     <text
-//       x={x}
-//       y={y}
-//       fill="white"
-//       textAnchor={x > cx ? "start" : "end"}
-//       dominantBaseline="central"
-//     >
-//       {`${(percent * 100).toFixed(0)}%`}
-//     </text>
-//   );
-// };
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({
+  cx,
+  cy,
+  startAngle,
+  midAngle,
+  endAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+  index,
+  payload
+}) => {
+  const sin = Math.sin(-RADIAN * endAngle);
+  const cos = Math.cos(-RADIAN * endAngle);
+  const x = cx + (innerRadius - 15) * cos;
+  const y = cy + (innerRadius - 15) * sin;
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="black"
+      textAnchor={x > cx ? 'middle' : 'middle'}
+      dominantBaseline="central"
+    >
+      {payload.Q}
+    </text>
+  );
+};
 
 const renderActiveShape = props => {
   const RADIAN = Math.PI / 180;
@@ -62,7 +62,7 @@ const renderActiveShape = props => {
   const my = cy + (outerRadius + 20) * sin;
   const ex = mx + (cos >= 0 ? 1 : -1) * 22;
   const ey = my;
-  const textAnchor = cos >= 0 ? "start" : "end";
+  const textAnchor = cos >= 0 ? 'start' : 'end';
 
   return (
     <g>
@@ -109,59 +109,62 @@ const renderActiveShape = props => {
         textAnchor={textAnchor}
         fill="#999"
       >
-        {`(Rate ${(percent * 100).toFixed(2)}%)`}
+        {`(Days Above ${payload.Q})`}
       </text> */}
     </g>
   );
 };
 
-@inject("store")
+@inject('store')
 @observer
 export default class Observed extends Component {
   render() {
-    const { observed, observedIndex, observedSectors } = this.props.store.app;
+    const { observed, observedIndex, observedQ } = this.props.store.app;
     const height = 300;
 
     let data = [];
     let COLORS;
-    if (observedSectors.length === 5) {
+    if (observedQ.length === 5) {
       data = [
-        { name: "Not Observed", value: 2 },
-        { name: "Below", value: 2 },
-        { name: "Slightly Below", value: 2 },
-        { name: "Slightly Above", value: 2 },
-        { name: "Above", value: 2 }
+        { name: 'Not Observed', value: 2, Q: observedQ[0] },
+        { name: 'Below', value: 2, Q: observedQ[1] },
+        { name: 'Slightly Below', value: 2, Q: observedQ[2] },
+        { name: 'Slightly Above', value: 2, Q: observedQ[3] },
+        { name: 'Above', value: 2, Q: observedQ[4] }
       ];
-      COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
+      COLORS = ['#292F36', '#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
     }
 
-    if (observedSectors.length === 4) {
+    if (observedQ.length === 4) {
       data = [
-        { name: "Not Observed", value: 2.5 },
-        { name: "Below", value: 2.5 },
-        { name: "Normal", value: 2.5 },
-        { name: "Above", value: 2.5 }
+        { name: 'Not Observed', value: 2.5, Q: observedQ[0] },
+        { name: 'Below', value: 2.5, Q: observedQ[1] },
+        { name: 'Normal', value: 2.5, Q: observedQ[2] },
+        { name: 'Above', value: 2.5, Q: observedQ[3] }
       ];
-      COLORS = ["#292F36", "#0088FE", "#7FB069", "#E63B2E"];
+      COLORS = ['#292F36', '#0088FE', '#7FB069', '#E63B2E'];
     }
 
-    if (observedSectors.length === 3) {
+    if (observedQ.length === 3) {
       data = [
-        { name: "Not Observed", value: 3 },
-        { name: "Slightly Below", value: 3 },
-        { name: "Slightly Above", value: 3 }
+        { name: 'Not Observed', value: 1, Q: observedQ[0] },
+        { name: 'Slightly Below', value: 1, Q: observedQ[1] },
+        { name: 'Slightly Above', value: 1, Q: observedQ[2] }
       ];
-      COLORS = ["#292F36", "#0088FE", "#7FB069"];
+      COLORS = ['#292F36', '#0088FE', '#7FB069'];
     }
 
-    if (observedSectors.length === 2) {
-      data = [{ name: "Normal", value: 500 }, { name: "Above", value: 500 }];
-      COLORS = ["#7FB069", "#E63B2E"];
+    if (observedQ.length === 2) {
+      data = [
+        { name: 'Normal', value: 1, Q: observedQ[0] },
+        { name: 'Above', value: 1, Q: observedQ[1] }
+      ];
+      COLORS = ['#7FB069', '#E63B2E'];
     }
 
-    if (observedSectors.length === 1) {
-      data = [{ name: "Not Observed", value: 1 }];
-      COLORS = ["#292F36"];
+    if (observedQ.length === 1) {
+      data = [{ name: 'Not Observed', value: 1 }];
+      COLORS = ['#292F36'];
     }
 
     let cell = null;
@@ -174,7 +177,7 @@ export default class Observed extends Component {
     return (
       <div>
         {data.length > 0
-          ? <div style={{ display: "flex", justifyContent: "flex-start" }}>
+          ? <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
               <PieChart
                 // style={{ border: "1px solid red" }}
                 width={500}
@@ -190,10 +193,10 @@ export default class Observed extends Component {
                   startAngle={220}
                   endAngle={-40}
                   labelLine={false}
-                  // label={renderCustomizedLabel}
+                  label={renderCustomizedLabel}
                   outerRadius={110}
                   innerRadius={90}
-                  paddingAngle={2}
+                  paddingAngle={3}
                 >
                   {cell}
                 </Pie>
@@ -218,9 +221,9 @@ export default class Observed extends Component {
                   iconType="rect"
                   payload={[
                     {
-                      value: "Days above selected temperature",
-                      type: "rect",
-                      color: "#ddd"
+                      value: 'Days above selected temperature',
+                      type: 'rect',
+                      color: '#ddd'
                     }
                   ]}
                 />

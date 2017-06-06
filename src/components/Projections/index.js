@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { inject, observer } from "mobx-react";
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
 
-import { PieChart, Pie, Sector, Cell } from "recharts";
+import { PieChart, Pie, Sector, Cell } from 'recharts';
 import {
   ComposedChart,
   Bar,
@@ -10,10 +10,40 @@ import {
   Tooltip,
   Legend,
   Line
-} from "recharts";
+} from 'recharts';
 
 // components
-import CustomLabels from "./CustomLabels";
+import CustomLabels from './CustomLabels';
+
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({
+  cx,
+  cy,
+  startAngle,
+  midAngle,
+  endAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+  index,
+  payload
+}) => {
+  const sin = Math.sin(-RADIAN * endAngle);
+  const cos = Math.cos(-RADIAN * endAngle);
+  const x = cx + (innerRadius - 15) * cos;
+  const y = cy + (innerRadius - 15) * sin;
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="black"
+      textAnchor={x > cx ? 'middle' : 'middle'}
+      dominantBaseline="central"
+    >
+      {payload.Q}
+    </text>
+  );
+};
 
 const renderActiveShape = props => {
   const RADIAN = Math.PI / 180;
@@ -38,7 +68,7 @@ const renderActiveShape = props => {
   const my = cy + (outerRadius + 20) * sin;
   const ex = mx + (cos >= 0 ? 1 : -1) * 22;
   const ey = my;
-  const textAnchor = cos >= 0 ? "start" : "end";
+  const textAnchor = cos >= 0 ? 'start' : 'end';
 
   return (
     <g>
@@ -91,105 +121,111 @@ const renderActiveShape = props => {
   );
 };
 
-@inject("store")
+@inject('store')
 @observer
 export default class Projections extends Component {
   render() {
     const {
       selectedProjection,
-      projection2070Sectors,
       projection2070Index,
       projection2070,
-      projection2040Sectors,
+      projection2070Q,
       projection2040Index,
-      projection2040
+      projection2040,
+      projection2040Q
     } = this.props.store.app;
-
+    console.log(projection2040);
     const height = 300;
 
     let data = [];
     let COLORS;
-    if (selectedProjection === "projection2040") {
-      if (projection2040Sectors.length === 5) {
+    if (selectedProjection === 'projection2040' && projection2040Q.length > 0) {
+      if (projection2040Q.length === 5) {
         data = [
-          { name: "Not Observed", value: 2 },
-          { name: "Below", value: 2 },
-          { name: "Slightly Below", value: 2 },
-          { name: "Slightly Above", value: 2 },
-          { name: "Above", value: 2 }
+          { name: 'Not Observed', value: 2, Q: projection2040Q[0] },
+          { name: 'Below', value: 2, Q: projection2040Q[1] },
+          { name: 'Slightly Below', value: 2, Q: projection2040Q[2] },
+          { name: 'Slightly Above', value: 2, Q: projection2040Q[3] },
+          { name: 'Above', value: 2, Q: projection2040Q[4] }
         ];
-        COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
+        COLORS = ['#292F36', '#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
       }
 
-      if (projection2040Sectors.length === 4) {
+      if (projection2040Q.length === 4) {
         data = [
-          { name: "Not Observed", value: 2.5 },
-          { name: "Below", value: 2.5 },
-          { name: "Normal", value: 2.5 },
-          { name: "Above", value: 2.5 }
+          { name: 'Not Observed', value: 2.5, Q: projection2040Q[0] },
+          { name: 'Below', value: 2.5, Q: projection2040Q[1] },
+          { name: 'Normal', value: 2.5, Q: projection2040Q[2] },
+          { name: 'Above', value: 2.5, Q: projection2040Q[3] }
         ];
-        COLORS = ["#292F36", "#0088FE", "#7FB069", "#E63B2E"];
+        COLORS = ['#292F36', '#0088FE', '#7FB069', '#E63B2E'];
       }
 
-      if (projection2040Sectors.length === 3) {
+      if (projection2040Q.length === 3) {
         data = [
-          { name: "Not Observed", value: 3 },
-          { name: "Slightly Below", value: 3 },
-          { name: "Slightly Above", value: 3 }
+          { name: 'Not Observed', value: 3, Q: projection2040Q[0] },
+          { name: 'Slightly Below', value: 3, Q: projection2040Q[1] },
+          { name: 'Slightly Above', value: 3, Q: projection2040Q[2] }
         ];
-        COLORS = ["#292F36", "#0088FE", "#7FB069"];
+        COLORS = ['#292F36', '#0088FE', '#7FB069'];
       }
 
-      if (projection2040Sectors.length === 2) {
-        data = [{ name: "Normal", value: 500 }, { name: "Above", value: 500 }];
-        COLORS = ["#7FB069", "#E63B2E"];
+      if (projection2040Q.length === 2) {
+        data = [
+          { name: 'Normal', value: 500, Q: projection2040Q[0] },
+          { name: 'Above', value: 500, Q: projection2040Q[1] }
+        ];
+        COLORS = ['#7FB069', '#E63B2E'];
       }
 
-      if (projection2040Sectors.length === 1) {
-        data = [{ name: "Not Observed", value: 1 }];
-        COLORS = ["#292F36"];
+      if (projection2040Q.length === 1) {
+        data = [{ name: 'Not Observed', value: 1 }];
+        COLORS = ['#292F36'];
       }
     }
 
-    if (selectedProjection === "projection2070") {
-      if (projection2070Sectors.length === 5) {
+    if (selectedProjection === 'projection2070' && projection2070Q.length > 0) {
+      if (projection2070Q.length === 5) {
         data = [
-          { name: "Not Observed", value: 2 },
-          { name: "Below", value: 2 },
-          { name: "Slightly Below", value: 2 },
-          { name: "Slightly Above", value: 2 },
-          { name: "Above", value: 2 }
+          { name: 'Not Observed', value: 2, Q: projection2070Q[0] },
+          { name: 'Below', value: 2, Q: projection2070Q[1] },
+          { name: 'Slightly Below', value: 2, Q: projection2070Q[2] },
+          { name: 'Slightly Above', value: 2, Q: projection2070Q[3] },
+          { name: 'Above', value: 2, Q: projection2070Q[4] }
         ];
-        COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
+        COLORS = ['#292F36', '#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
       }
 
-      if (projection2070Sectors.length === 4) {
+      if (projection2070Q.length === 4) {
         data = [
-          { name: "Not Observed", value: 2.5 },
-          { name: "Below", value: 2.5 },
-          { name: "Normal", value: 2.5 },
-          { name: "Above", value: 2.5 }
+          { name: 'Not Observed', value: 2.5, Q: projection2070Q[0] },
+          { name: 'Below', value: 2.5, Q: projection2070Q[1] },
+          { name: 'Normal', value: 2.5, Q: projection2070Q[2] },
+          { name: 'Above', value: 2.5, Q: projection2070Q[3] }
         ];
-        COLORS = ["#292F36", "#0088FE", "#7FB069", "#E63B2E"];
+        COLORS = ['#292F36', '#0088FE', '#7FB069', '#E63B2E'];
       }
 
-      if (projection2070Sectors.length === 3) {
+      if (projection2070Q.length === 3) {
         data = [
-          { name: "Not Observed", value: 3 },
-          { name: "Slightly Below", value: 3 },
-          { name: "Slightly Above", value: 3 }
+          { name: 'Not Observed', value: 3, Q: projection2070Q[0] },
+          { name: 'Slightly Below', value: 3, Q: projection2070Q[1] },
+          { name: 'Slightly Above', value: 3, Q: projection2070Q[2] }
         ];
-        COLORS = ["#292F36", "#0088FE", "#7FB069"];
+        COLORS = ['#292F36', '#0088FE', '#7FB069'];
       }
 
-      if (projection2070Sectors.length === 2) {
-        data = [{ name: "Normal", value: 500 }, { name: "Above", value: 500 }];
-        COLORS = ["#7FB069", "#E63B2E"];
+      if (projection2070Q.length === 2) {
+        data = [
+          { name: 'Normal', value: 500, Q: projection2070Q[0] },
+          { name: 'Above', value: 500, Q: projection2070Q[1] }
+        ];
+        COLORS = ['#7FB069', '#E63B2E'];
       }
 
-      if (projection2070Sectors.length === 1) {
-        data = [{ name: "Not Observed", value: 1 }];
-        COLORS = ["#292F36"];
+      if (projection2070Q.length === 1) {
+        data = [{ name: 'Not Observed', value: 1 }];
+        COLORS = ['#292F36'];
       }
     }
 
@@ -201,7 +237,7 @@ export default class Projections extends Component {
     }
 
     return (
-      <div style={{ display: "flex", justifyContent: "flex-start" }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
         <PieChart
           // style={{ border: "1px solid red" }}
           width={500}
@@ -213,7 +249,7 @@ export default class Projections extends Component {
             cx={250}
             cy={height / 1.6}
             activeIndex={
-              selectedProjection === "projection2040"
+              selectedProjection === 'projection2040'
                 ? projection2040Index
                 : projection2070Index
             }
@@ -221,7 +257,7 @@ export default class Projections extends Component {
             startAngle={220}
             endAngle={-40}
             labelLine={false}
-            // label={renderCustomizedLabel}
+            label={renderCustomizedLabel}
             outerRadius={110}
             innerRadius={90}
             paddingAngle={2}
@@ -236,7 +272,7 @@ export default class Projections extends Component {
           width={600}
           height={height}
           data={
-            selectedProjection === "projection2040"
+            selectedProjection === 'projection2040'
               ? projection2040
               : projection2070
           }
@@ -253,9 +289,9 @@ export default class Projections extends Component {
             iconType="rect"
             payload={[
               {
-                value: "Days above selected temperature",
-                type: "rect",
-                color: "#ddd"
+                value: 'Days above selected temperature',
+                type: 'rect',
+                color: '#ddd'
               }
             ]}
           />

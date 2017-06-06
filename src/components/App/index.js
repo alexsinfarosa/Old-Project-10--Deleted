@@ -1,20 +1,20 @@
-import React, { Component } from "react";
-import { inject, observer } from "mobx-react";
-import { when } from "mobx";
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { when } from 'mobx';
 
-import { Spin } from "antd";
+import { Spin } from 'antd';
 
 // components
-import AppMenu from "components/AppMenu";
-import AppSlider from "components/AppSlider";
-import Observed from "components/Observed";
-import ProjectionButtons from "components/ProjectionButtons";
-import Projections from "components/Projections";
+import AppMenu from 'components/AppMenu';
+import AppSlider from 'components/AppSlider';
+import Observed from 'components/Observed';
+import ProjectionButtons from 'components/ProjectionButtons';
+import Projections from 'components/Projections';
 
 // styled-components
-import { Page, Header } from "./styles";
+import { Page, Header } from './styles';
 
-@inject("store")
+@inject('store')
 @observer
 class App extends Component {
   constructor(props) {
