@@ -7,12 +7,9 @@ import { Radio } from 'antd';
 @observer
 class AppMenu extends Component {
   onChange = e => {
-    const { selectedProjection } = this.props.store.app;
     this.props.store.app.setStation(e.target.value);
     this.props.store.app.loadObservedData();
-    if (selectedProjection === 'projection2040') {
-      this.props.store.app.loadProjection2040();
-    }
+    this.props.store.app.loadProjection2040();
     this.props.store.app.loadProjection2070();
   };
 
