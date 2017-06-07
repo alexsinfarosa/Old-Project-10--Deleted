@@ -51,7 +51,7 @@ class App extends Component {
 
         {/* <h3>Number of days {daysAboveLastYear}</h3> */}
         <br />
-        {isLoading ? <Spin /> : <Observed />}
+        <Observed />
 
         <br />
         {isLoading ? null : <ProjectionButtons />}
