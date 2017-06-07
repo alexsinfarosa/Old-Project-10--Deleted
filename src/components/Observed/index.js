@@ -5,7 +5,7 @@ import { PieChart, Pie, Sector, Cell } from 'recharts';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 // components
-import CustomLabels from './CustomLabels';
+import CustomLabels from 'components/Graph/CustomLabels';
 
 import { Spin } from 'antd';
 

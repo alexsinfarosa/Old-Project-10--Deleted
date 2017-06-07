@@ -33,14 +33,9 @@ class App extends Component {
     const {
       temperature,
       daysAboveLastYear,
-      projectedData2040,
-      projectedData2070
+      isLoading,
+      isPLoading
     } = this.props.store.app;
-
-    let displayProjection = true;
-    if (projectedData2040.length > 0 || projectedData2070.length > 0) {
-      displayProjection = false;
-    }
 
     return (
       <Page>
@@ -56,13 +51,13 @@ class App extends Component {
 
         {/* <h3>Number of days {daysAboveLastYear}</h3> */}
         <br />
-        <Observed />
+        {isLoading ? <Spin /> : <Observed />}
 
         <br />
-        {displayProjection ? null : <ProjectionButtons />}
+        {isLoading ? null : <ProjectionButtons />}
 
         <br />
-        {displayProjection ? <Spin /> : <Projections />}
+        {isPLoading ? <Spin /> : <Projections />}
 
       </Page>
     );

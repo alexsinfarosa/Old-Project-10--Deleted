@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 
 // components
-import CustomLabels from './CustomLabels';
+import CustomLabels from 'components/Graph/CustomLabels';
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -129,101 +129,100 @@ export default class Projections extends Component {
       selectedProjection,
       projection2070Index,
       projection2070,
-      projection2070Q,
+      projectedData2070Q,
       projection2040Index,
       projection2040,
-      projection2040Q
+      projectedData2040Q
     } = this.props.store.app;
-    console.log(projection2040);
     const height = 300;
 
     let data = [];
     let COLORS;
-    if (selectedProjection === 'projection2040' && projection2040Q.length > 0) {
-      if (projection2040Q.length === 5) {
+    if (selectedProjection === 'projection2040') {
+      if (projectedData2040Q.length === 5) {
         data = [
-          { name: 'Not Observed', value: 2, Q: projection2040Q[0] },
-          { name: 'Below', value: 2, Q: projection2040Q[1] },
-          { name: 'Slightly Below', value: 2, Q: projection2040Q[2] },
-          { name: 'Slightly Above', value: 2, Q: projection2040Q[3] },
-          { name: 'Above', value: 2, Q: projection2040Q[4] }
+          { name: 'Not Observed', value: 2, Q: projectedData2040Q[0] },
+          { name: 'Below', value: 2, Q: projectedData2040Q[1] },
+          { name: 'Slightly Below', value: 2, Q: projectedData2040Q[2] },
+          { name: 'Slightly Above', value: 2, Q: projectedData2040Q[3] },
+          { name: 'Above', value: 2, Q: projectedData2040Q[4] }
         ];
         COLORS = ['#292F36', '#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
       }
 
-      if (projection2040Q.length === 4) {
+      if (projectedData2040Q.length === 4) {
         data = [
-          { name: 'Not Observed', value: 2.5, Q: projection2040Q[0] },
-          { name: 'Below', value: 2.5, Q: projection2040Q[1] },
-          { name: 'Normal', value: 2.5, Q: projection2040Q[2] },
-          { name: 'Above', value: 2.5, Q: projection2040Q[3] }
+          { name: 'Not Observed', value: 2.5, Q: projectedData2040Q[0] },
+          { name: 'Below', value: 2.5, Q: projectedData2040Q[1] },
+          { name: 'Normal', value: 2.5, Q: projectedData2040Q[2] },
+          { name: 'Above', value: 2.5, Q: projectedData2040Q[3] }
         ];
         COLORS = ['#292F36', '#0088FE', '#7FB069', '#E63B2E'];
       }
 
-      if (projection2040Q.length === 3) {
+      if (projectedData2040Q.length === 3) {
         data = [
-          { name: 'Not Observed', value: 3, Q: projection2040Q[0] },
-          { name: 'Slightly Below', value: 3, Q: projection2040Q[1] },
-          { name: 'Slightly Above', value: 3, Q: projection2040Q[2] }
+          { name: 'Not Observed', value: 3, Q: projectedData2040Q[0] },
+          { name: 'Slightly Below', value: 3, Q: projectedData2040Q[1] },
+          { name: 'Slightly Above', value: 3, Q: projectedData2040Q[2] }
         ];
         COLORS = ['#292F36', '#0088FE', '#7FB069'];
       }
 
-      if (projection2040Q.length === 2) {
+      if (projectedData2040Q.length === 2) {
         data = [
-          { name: 'Normal', value: 500, Q: projection2040Q[0] },
-          { name: 'Above', value: 500, Q: projection2040Q[1] }
+          { name: 'Normal', value: 500, Q: projectedData2040Q[0] },
+          { name: 'Above', value: 500, Q: projectedData2040Q[1] }
         ];
         COLORS = ['#7FB069', '#E63B2E'];
       }
 
-      if (projection2040Q.length === 1) {
+      if (projectedData2040Q.length === 1) {
         data = [{ name: 'Not Observed', value: 1 }];
         COLORS = ['#292F36'];
       }
     }
 
-    if (selectedProjection === 'projection2070' && projection2070Q.length > 0) {
-      if (projection2070Q.length === 5) {
+    if (selectedProjection === 'projection2070' && projection2070.length > 0) {
+      if (projectedData2070Q.length === 5) {
         data = [
-          { name: 'Not Observed', value: 2, Q: projection2070Q[0] },
-          { name: 'Below', value: 2, Q: projection2070Q[1] },
-          { name: 'Slightly Below', value: 2, Q: projection2070Q[2] },
-          { name: 'Slightly Above', value: 2, Q: projection2070Q[3] },
-          { name: 'Above', value: 2, Q: projection2070Q[4] }
+          { name: 'Not Observed', value: 2, Q: projectedData2070Q[0] },
+          { name: 'Below', value: 2, Q: projectedData2070Q[1] },
+          { name: 'Slightly Below', value: 2, Q: projectedData2070Q[2] },
+          { name: 'Slightly Above', value: 2, Q: projectedData2070Q[3] },
+          { name: 'Above', value: 2, Q: projectedData2070Q[4] }
         ];
         COLORS = ['#292F36', '#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
       }
 
-      if (projection2070Q.length === 4) {
+      if (projectedData2070Q.length === 4) {
         data = [
-          { name: 'Not Observed', value: 2.5, Q: projection2070Q[0] },
-          { name: 'Below', value: 2.5, Q: projection2070Q[1] },
-          { name: 'Normal', value: 2.5, Q: projection2070Q[2] },
-          { name: 'Above', value: 2.5, Q: projection2070Q[3] }
+          { name: 'Not Observed', value: 2.5, Q: projectedData2070Q[0] },
+          { name: 'Below', value: 2.5, Q: projectedData2070Q[1] },
+          { name: 'Normal', value: 2.5, Q: projectedData2070Q[2] },
+          { name: 'Above', value: 2.5, Q: projectedData2070Q[3] }
         ];
         COLORS = ['#292F36', '#0088FE', '#7FB069', '#E63B2E'];
       }
 
-      if (projection2070Q.length === 3) {
+      if (projectedData2070Q.length === 3) {
         data = [
-          { name: 'Not Observed', value: 3, Q: projection2070Q[0] },
-          { name: 'Slightly Below', value: 3, Q: projection2070Q[1] },
-          { name: 'Slightly Above', value: 3, Q: projection2070Q[2] }
+          { name: 'Not Observed', value: 3, Q: projectedData2070Q[0] },
+          { name: 'Slightly Below', value: 3, Q: projectedData2070Q[1] },
+          { name: 'Slightly Above', value: 3, Q: projectedData2070Q[2] }
         ];
         COLORS = ['#292F36', '#0088FE', '#7FB069'];
       }
 
-      if (projection2070Q.length === 2) {
+      if (projectedData2070Q.length === 2) {
         data = [
-          { name: 'Normal', value: 500, Q: projection2070Q[0] },
-          { name: 'Above', value: 500, Q: projection2070Q[1] }
+          { name: 'Normal', value: 500, Q: projectedData2070Q[0] },
+          { name: 'Above', value: 500, Q: projectedData2070Q[1] }
         ];
         COLORS = ['#7FB069', '#E63B2E'];
       }
 
-      if (projection2070Q.length === 1) {
+      if (projectedData2070Q.length === 1) {
         data = [{ name: 'Not Observed', value: 1 }];
         COLORS = ['#292F36'];
       }
@@ -260,7 +259,7 @@ export default class Projections extends Component {
             label={renderCustomizedLabel}
             outerRadius={110}
             innerRadius={90}
-            paddingAngle={2}
+            paddingAngle={3}
           >
             {cell}
           </Pie>

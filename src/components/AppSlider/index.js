@@ -37,7 +37,7 @@ class AppSlider extends Component {
         min={75}
         marks={marks}
         defaultValue={temperature}
-        onChange={this.onChange}
+        onAfterChange={this.onChange}
       />
     );
   }
