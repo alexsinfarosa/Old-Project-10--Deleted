@@ -80,98 +80,72 @@ export default class AppStore {
     return values[values.length - 1];
   }
 
-  // @computed
-  // get observedQ() {
-  //   const values = this.observedData.map(year => Number(year[1]));
-  //   let Q1 = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
-  //   let Q2 = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
-  //   let Q3 = jStat.quantiles(values, [0, 0.5, 1]);
-  //   let Q4 = jStat.quantiles(values, [0.5, 1]);
-  //   let Q5 = jStat.quantiles(values, [1]);
-  //
-  //   let Q1U = [...new Set(Q1)];
-  //   console.log(Q1, Q1U);
-  //   if (Q1U.length === Q1.length) return Q1U.map(d => Math.round(d));
-  //
-  //   let Q2U = [...new Set(Q2)];
-  //   if (Q2U.length === Q2.length) return Q2U.map(d => Math.round(d));
-  //
-  //   let Q3U = [...new Set(Q3)];
-  //   if (Q3U.length === Q3.length) return Q3U.map(d => Math.round(d));
-  //
-  //   let Q4U = [...new Set(Q4)];
-  //   if (Q4U.length === Q4.length) return Q4U.map(d => Math.round(d));
-  //
-  //   let Q5U = [...new Set(Q5)];
-  //   if (Q5U.length === Q5.length) return Q5U.map(d => Math.round(d));
-  // }
-
   @computed
   get observedQ() {
     const values = this.observedData.map(year => Number(year[1]));
-    let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]); // min,25,50,75,100
-    Q = Q.map(q => Math.round(q));
-    console.log(`Original ${Q}`);
-    if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3] && Q[3] === Q[4]) {
-      console.log(`100 ${Q}`);
-      return [Q[4]]; // 100
-    }
+    let Q1 = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+    let Q2 = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
+    let Q3 = jStat.quantiles(values, [0, 0.5, 1]);
+    let Q4 = jStat.quantiles(values, [0.5, 1]);
+    let Q5 = jStat.quantiles(values, [1]);
 
-    if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3]) {
-      console.log(`75,100 ${Q}`);
-      return [Q[3], Q[4]]; // 75,100
-    }
+    let Q1U = [...new Set(Q1)];
+    if (Q1U.length === Q1.length) return Q1U.map(d => Math.round(d));
 
-    if (Q[0] === Q[1] && Q[1] === Q[2]) {
-      console.log(`50,75,100 ${Q}`);
-      return [Q[2], Q[3], Q[4]]; // 50,75,100
-    }
+    let Q2U = [...new Set(Q2)];
+    if (Q2U.length === Q2.length) return Q2U.map(d => Math.round(d));
 
-    if (Q[0] === Q[1]) {
-      console.log(`25,50,75,100 ${Q}`);
-      return [Q[1], Q[2], Q[3], Q[4]]; // 25,50,75,100
-    }
-    return Q;
+    let Q3U = [...new Set(Q3)];
+    if (Q3U.length === Q3.length) return Q3U.map(d => Math.round(d));
+
+    let Q4U = [...new Set(Q4)];
+    if (Q4U.length === Q4.length) return Q4U.map(d => Math.round(d));
+
+    let Q5U = [...new Set(Q5)];
+    if (Q5U.length === Q5.length) return Q5U.map(d => Math.round(d));
   }
 
   @computed
   get observedIndex() {
+    // if (this.observedData.length > 0) {
     const d = this.daysAboveLastYear;
     const Q = this.observedQ;
 
     if (Q.length === 5) {
+      console.log(Q);
       if (d < Q[0]) return 0;
       if (d >= Q[0] && d < Q[1]) return 1;
       if (d >= Q[1] && d < Q[2]) return 2;
-      if (d === Q[2]) return 3;
-      if (d > Q[2] && d <= Q[3]) return 4;
-      if (d > Q[3] && d <= Q[4]) return 5;
+      if (d >= Q[2] && d < Q[3]) return 3;
+      if (d >= Q[3] && d <= Q[4]) return 4;
     }
 
     if (Q.length === 4) {
+      console.log(Q);
       if (d < Q[0]) return 0;
       if (d >= Q[0] && d < Q[1]) return 1;
-      if (d === Q[1]) return 2;
-      if (d > Q[1] && d <= Q[2]) return 3;
-      if (d > Q[2] && d <= Q[3]) return 4;
+      if (d >= Q[1] && d < Q[2]) return 2;
+      if (d >= Q[2] && d <= Q[3]) return 3;
     }
 
     if (Q.length === 3) {
+      console.log(Q);
       if (d < Q[0]) return 0;
-      if (d === Q[0]) return 1;
-      if (d > Q[0] && d <= Q[1]) return 2;
-      if (d > Q[1] && d <= Q[2]) return 3;
+      if (d >= Q[0] && d < Q[1]) return 1;
+      if (d >= Q[1] && d <= Q[2]) return 2;
     }
 
     if (Q.length === 2) {
-      if (d < Q[0]) return 0;
-      if (d === Q[0]) return 1;
-      if (d > Q[0] && d <= Q[1]) return 2;
+      console.log(Q);
+      if (d <= Q[0]) return 0;
+      if (d > Q[0]) return 1;
     }
 
     if (Q.length === 1) {
+      console.log(Q);
       return 0;
     }
+    // }
   }
 
   @computed
@@ -186,7 +160,7 @@ export default class AppStore {
         colors: ['#292F36', '#0088FE', '#7FB069']
       });
     });
-
+    console.log(results);
     return results;
   }
 
@@ -231,70 +205,72 @@ export default class AppStore {
 
   @computed
   get projectedData2040Q() {
+    // if (this.projectedData2040.length > 0) {
     const values = this.projectedData2040.map(year => Number(year[1]));
-    let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]); // min,25,50,75,100
-    Q = Q.map(q => Math.round(q));
-    console.log(`projection2040 ${Q}`);
-    if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3] && Q[3] === Q[4]) {
-      console.log(`100 ${Q}`);
-      return [Q[4]]; // 100
-    }
+    let Q1 = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+    let Q2 = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
+    let Q3 = jStat.quantiles(values, [0, 0.5, 1]);
+    let Q4 = jStat.quantiles(values, [0.5, 1]);
+    let Q5 = jStat.quantiles(values, [1]);
 
-    if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3]) {
-      console.log(`75,100 ${Q}`);
-      return [Q[3], Q[4]]; // 75,100
-    }
+    let Q1U = [...new Set(Q1)];
+    if (Q1U.length === Q1.length) return Q1U.map(d => Math.round(d));
 
-    if (Q[0] === Q[1] && Q[1] === Q[2]) {
-      console.log(`50,75,100 ${Q}`);
-      return [Q[2], Q[3], Q[4]]; // 50,75,100
-    }
+    let Q2U = [...new Set(Q2)];
+    if (Q2U.length === Q2.length) return Q2U.map(d => Math.round(d));
 
-    if (Q[0] === Q[1]) {
-      console.log(`25,50,75,100 ${Q}`);
-      return [Q[1], Q[2], Q[3], Q[4]]; // 25,50,75,100
-    }
-    return Q;
+    let Q3U = [...new Set(Q3)];
+    if (Q3U.length === Q3.length) return Q3U.map(d => Math.round(d));
+
+    let Q4U = [...new Set(Q4)];
+    if (Q4U.length === Q4.length) return Q4U.map(d => Math.round(d));
+
+    let Q5U = [...new Set(Q5)];
+    if (Q5U.length === Q5.length) return Q5U.map(d => Math.round(d));
+    // }
   }
 
   @computed
   get projection2040Index() {
+    // if (this.projectedData2040.length > 0) {
     const d = this.daysAboveLastYear;
     const Q = this.projectedData2040Q;
 
     if (Q.length === 5) {
+      console.log(Q, d);
       if (d < Q[0]) return 0;
       if (d >= Q[0] && d < Q[1]) return 1;
       if (d >= Q[1] && d < Q[2]) return 2;
-      if (d === Q[2]) return 3;
-      if (d > Q[2] && d <= Q[3]) return 4;
-      if (d > Q[3] && d <= Q[4]) return 5;
+      if (d >= Q[2] && d < Q[3]) return 3;
+      if (d >= Q[3] && d <= Q[4]) return 4;
     }
 
     if (Q.length === 4) {
+      console.log(Q, d);
       if (d < Q[0]) return 0;
       if (d >= Q[0] && d < Q[1]) return 1;
-      if (d === Q[1]) return 2;
-      if (d > Q[1] && d <= Q[2]) return 3;
-      if (d > Q[2] && d <= Q[3]) return 4;
+      if (d >= Q[1] && d < Q[2]) return 2;
+      if (d >= Q[2] && d <= Q[3]) return 3;
     }
 
     if (Q.length === 3) {
+      console.log(Q, d);
       if (d < Q[0]) return 0;
-      if (d === Q[0]) return 1;
-      if (d > Q[0] && d <= Q[1]) return 2;
-      if (d > Q[1] && d <= Q[2]) return 3;
+      if (d >= Q[0] && d < Q[1]) return 1;
+      if (d >= Q[1] && d <= Q[2]) return 2;
     }
 
     if (Q.length === 2) {
-      if (d < Q[0]) return 0;
-      if (d === Q[0]) return 1;
-      if (d > Q[0] && d <= Q[1]) return 2;
+      console.log(Q, d);
+      if (d <= Q[0]) return 0;
+      if (d > Q[0]) return 1;
     }
 
     if (Q.length === 1) {
+      console.log(Q, d);
       return 0;
     }
+    // }
   }
 
   @computed
@@ -351,69 +327,69 @@ export default class AppStore {
   @computed
   get projectedData2070Q() {
     const values = this.projectedData2070.map(year => Number(year[1]));
-    let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]); // min,25,50,75,100
-    Q = Q.map(q => Math.round(q));
-    console.log(`projection2070 ${Q}`);
-    if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3] && Q[3] === Q[4]) {
-      console.log(`100 ${Q}`);
-      return [Q[4]]; // 100
-    }
+    let Q1 = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
+    let Q2 = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
+    let Q3 = jStat.quantiles(values, [0, 0.5, 1]);
+    let Q4 = jStat.quantiles(values, [0.5, 1]);
+    let Q5 = jStat.quantiles(values, [1]);
 
-    if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3]) {
-      console.log(`75,100 ${Q}`);
-      return [Q[3], Q[4]]; // 75,100
-    }
+    let Q1U = [...new Set(Q1)];
+    if (Q1U.length === Q1.length) return Q1U.map(d => Math.round(d));
 
-    if (Q[0] === Q[1] && Q[1] === Q[2]) {
-      console.log(`50,75,100 ${Q}`);
-      return [Q[2], Q[3], Q[4]]; // 50,75,100
-    }
+    let Q2U = [...new Set(Q2)];
+    if (Q2U.length === Q2.length) return Q2U.map(d => Math.round(d));
 
-    if (Q[0] === Q[1]) {
-      console.log(`25,50,75,100 ${Q}`);
-      return [Q[1], Q[2], Q[3], Q[4]]; // 25,50,75,100
-    }
-    return Q;
+    let Q3U = [...new Set(Q3)];
+    if (Q3U.length === Q3.length) return Q3U.map(d => Math.round(d));
+
+    let Q4U = [...new Set(Q4)];
+    if (Q4U.length === Q4.length) return Q4U.map(d => Math.round(d));
+
+    let Q5U = [...new Set(Q5)];
+    if (Q5U.length === Q5.length) return Q5U.map(d => Math.round(d));
   }
 
   @computed
   get projection2070Index() {
+    // if (this.projectedData2070.length > 0) {
     const d = this.daysAboveLastYear;
     const Q = this.projectedData2070Q;
 
     if (Q.length === 5) {
+      console.log(Q, d);
       if (d < Q[0]) return 0;
       if (d >= Q[0] && d < Q[1]) return 1;
       if (d >= Q[1] && d < Q[2]) return 2;
-      if (d === Q[2]) return 3;
-      if (d > Q[2] && d <= Q[3]) return 4;
-      if (d > Q[3] && d <= Q[4]) return 5;
+      if (d >= Q[2] && d < Q[3]) return 3;
+      if (d >= Q[3] && d <= Q[4]) return 4;
     }
 
     if (Q.length === 4) {
+      console.log(Q, d);
       if (d < Q[0]) return 0;
       if (d >= Q[0] && d < Q[1]) return 1;
-      if (d === Q[1]) return 2;
-      if (d > Q[1] && d <= Q[2]) return 3;
-      if (d > Q[2] && d <= Q[3]) return 4;
+      if (d >= Q[1] && d < Q[2]) return 2;
+      if (d >= Q[2] && d <= Q[3]) return 3;
     }
 
     if (Q.length === 3) {
+      console.log(Q, d);
       if (d < Q[0]) return 0;
-      if (d === Q[0]) return 1;
-      if (d > Q[0] && d <= Q[1]) return 2;
-      if (d > Q[1] && d <= Q[2]) return 3;
+      if (d >= Q[0] && d < Q[1]) return 1;
+      if (d >= Q[1] && d <= Q[2]) return 2;
     }
 
     if (Q.length === 2) {
-      if (d < Q[0]) return 0;
-      if (d === Q[0]) return 1;
-      if (d > Q[0] && d <= Q[1]) return 2;
+      console.log(Q, d);
+      if (d <= Q[0]) return 0;
+      if (d > Q[0]) return 1;
     }
 
     if (Q.length === 1) {
+      console.log(Q, d);
       return 0;
     }
+    // }
   }
 
   @computed

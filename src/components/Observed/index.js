@@ -66,7 +66,14 @@ const renderActiveShape = props => {
 
   return (
     <g>
-      <text x={cx} y={cy} dy={-8} textAnchor="middle" fill="#333">
+      <text
+        x={cx}
+        y={cy}
+        dy={-8}
+        textAnchor="middle"
+        fill="#333"
+        fontSize=".8rem"
+      >
         {/* {payload.name} */}
         Observed
       </text>
@@ -126,40 +133,51 @@ export default class Observed extends Component {
     let COLORS;
     if (observedQ.length === 5) {
       data = [
-        { name: 'Not Observed', value: 2, Q: observedQ[0] },
-        { name: 'Below', value: 2, Q: observedQ[1] },
-        { name: 'Slightly Below', value: 2, Q: observedQ[2] },
-        { name: 'Slightly Above', value: 2, Q: observedQ[3] },
-        { name: 'Above', value: 2, Q: observedQ[4] }
+        { name: 'Not Observed', value: 1, Q: observedQ[0] },
+        { name: 'Below', value: 1, Q: observedQ[1] },
+        { name: 'Slightly Below', value: 1, Q: observedQ[2] },
+        { name: 'Normal' },
+        { name: 'Slightly Above', value: 1, Q: observedQ[3] },
+        { name: 'Above', value: 1, Q: observedQ[4] }
       ];
-      COLORS = ['#292F36', '#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
+      COLORS = [
+        '#292F36',
+        '#0088FE',
+        '#7FB069',
+        '#BFB649',
+        '#FFBB28',
+        '#E63B2E'
+      ];
     }
 
     if (observedQ.length === 4) {
       data = [
-        { name: 'Not Observed', value: 2.5, Q: observedQ[0] },
-        { name: 'Below', value: 2.5, Q: observedQ[1] },
-        { name: 'Normal', value: 2.5, Q: observedQ[2] },
-        { name: 'Above', value: 2.5, Q: observedQ[3] }
+        { name: 'Below', value: 1, Q: observedQ[0] },
+        { name: 'Slightly Below', value: 1, Q: observedQ[1] },
+        { name: 'Normal' },
+        { name: 'Slightly Above', value: 1, Q: observedQ[2] },
+        { name: 'Above', value: 1, Q: observedQ[3] }
       ];
-      COLORS = ['#292F36', '#0088FE', '#7FB069', '#E63B2E'];
+      COLORS = ['#0088FE', '#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
     }
 
     if (observedQ.length === 3) {
       data = [
-        { name: 'Not Observed', value: 1, Q: observedQ[0] },
-        { name: 'Slightly Below', value: 1, Q: observedQ[1] },
-        { name: 'Slightly Above', value: 1, Q: observedQ[2] }
+        { name: 'Slightly Below', value: 1, Q: observedQ[0] },
+        { name: 'Normal' },
+        { name: 'Slightly Above', value: 1, Q: observedQ[1] },
+        { name: 'Above', value: 1, Q: observedQ[2] }
       ];
-      COLORS = ['#292F36', '#0088FE', '#7FB069'];
+      COLORS = ['#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
     }
 
     if (observedQ.length === 2) {
       data = [
-        { name: 'Normal', value: 1, Q: observedQ[0] },
+        { name: 'Slightly Below', value: 1, Q: observedQ[0] },
+        { name: 'Mean' },
         { name: 'Above', value: 1, Q: observedQ[1] }
       ];
-      COLORS = ['#7FB069', '#E63B2E'];
+      COLORS = ['#7FB069', '#F37B2B', '#E63B2E'];
     }
 
     if (observedQ.length === 1) {
@@ -196,7 +214,7 @@ export default class Observed extends Component {
                   label={renderCustomizedLabel}
                   outerRadius={110}
                   innerRadius={90}
-                  paddingAngle={3}
+                  paddingAngle={1}
                 >
                   {cell}
                 </Pie>
