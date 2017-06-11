@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
-import { PieChart, Pie, Sector, Cell } from "recharts";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Sector, Cell, Line } from "recharts";
+import { ComposedChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 // components
 import CustomLabels from "components/Graph/CustomLabels";
@@ -128,6 +128,8 @@ const renderActiveShape = props => {
 export default class Observed extends Component {
   render() {
     const {
+      temperature,
+      mean,
       observed,
       observedIndex,
       observedQ,
@@ -376,7 +378,7 @@ export default class Observed extends Component {
                 <Legend />
               </PieChart>
 
-              <BarChart
+              <ComposedChart
                 // style={{ border: "1px solid green" }}
                 width={600}
                 height={height}
@@ -394,9 +396,14 @@ export default class Observed extends Component {
                   iconType="rect"
                   payload={[
                     {
-                      value: "Days above selected temperature",
+                      value: `Days above ${temperature} ˚F`,
                       type: "rect",
                       color: "#ddd"
+                    },
+                    {
+                      value: `Mean ${mean}`,
+                      type: "line",
+                      color: "#ff7300"
                     }
                   ]}
                 />
@@ -408,7 +415,13 @@ export default class Observed extends Component {
                     return <Cell key={i} fill="#ddd" />;
                   })}
                 </Bar>
-              </BarChart>
+                <Line
+                  type="monotone"
+                  dataKey="mean"
+                  stroke="#ff7300"
+                  dot={false}
+                />
+              </ComposedChart>
             </div>
           : <Spin />}
       </div>

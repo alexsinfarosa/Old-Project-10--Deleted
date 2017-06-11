@@ -71,6 +71,7 @@ export default class AppStore {
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
         this.setObservedData(res.data.data);
+        this.setMean();
         this.setIsLoading(false);
       })
       .catch(err => {
@@ -84,31 +85,12 @@ export default class AppStore {
     return values[values.length - 1];
   }
 
-  // @computed
-  // get observedQ() {
-  //   const values = this.observedData.map(year => Number(year[1]));
-  //   let Q1 = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]);
-  //   let Q2 = jStat.quantiles(values, [0, 0.33, 0.66, 1]);
-  //   let Q3 = jStat.quantiles(values, [0, 0.5, 1]);
-  //   let Q4 = jStat.quantiles(values, [0.5, 1]);
-  //   let Q5 = jStat.quantiles(values, [1]);
-  //
-  //   let Q1U = [...new Set(Q1)];
-  //   console.log(Q1, Q1U);
-  //   if (Q1U.length === Q1.length) return Q1U.map(d => Math.round(d));
-  //
-  //   let Q2U = [...new Set(Q2)];
-  //   if (Q2U.length === Q2.length) return Q2U.map(d => Math.round(d));
-  //
-  //   let Q3U = [...new Set(Q3)];
-  //   if (Q3U.length === Q3.length) return Q3U.map(d => Math.round(d));
-  //
-  //   let Q4U = [...new Set(Q4)];
-  //   if (Q4U.length === Q4.length) return Q4U.map(d => Math.round(d));
-  //
-  //   let Q5U = [...new Set(Q5)];
-  //   if (Q5U.length === Q5.length) return Q5U.map(d => Math.round(d));
-  // }
+  @observable mean;
+  @action
+  setMean() {
+    const values = this.observedData.map(year => Number(year[1]));
+    this.mean = Math.round(jStat.quantiles(values, [0.5]));
+  }
 
   @computed
   get observedQ() {
@@ -192,14 +174,13 @@ export default class AppStore {
 
   @computed
   get observed() {
+    const values = this.observedData.map(year => Number(year[1]));
     let results = [];
     this.observedData.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
         "days above": Number(d[1]),
-        i: this.observedIndex,
-        q: this.observedQ,
-        colors: ["#292F36", "#0088FE", "#7FB069"]
+        mean: Math.round(jStat.quantiles(values, [0.5]))
       });
     });
 
@@ -239,11 +220,19 @@ export default class AppStore {
       .post(`${this.protocol}//grid.rcc-acis.org/GridData`, params)
       .then(res => {
         this.setProjectedData2040(res.data.data);
+        this.setp2040Mean();
         this.setIsPLoading(false);
       })
       .catch(err => {
         console.log("Failed to load projection 2040-2069 ", err);
       });
+  }
+
+  @observable p2040Mean;
+  @action
+  setp2040Mean() {
+    const values = this.projectedData2040.map(year => Number(year[1]));
+    this.p2040Mean = Math.round(jStat.quantiles(values, [0.5]));
   }
 
   @computed
@@ -328,11 +317,13 @@ export default class AppStore {
 
   @computed
   get projection2040() {
+    const values = this.projectedData2040.map(year => Number(year[1]));
     let results = [];
     this.projectedData2040.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
-        "days above": Number(d[1])
+        "days above": Number(d[1]),
+        mean: Math.round(jStat.quantiles(values, [0.5]))
       });
     });
 
@@ -372,12 +363,20 @@ export default class AppStore {
       .post(`${this.protocol}//grid.rcc-acis.org/GridData`, params)
       .then(res => {
         this.setProjectedData2070(res.data.data);
+        this.setp2070Mean();
         this.setIsPLoading(false);
       })
       .catch(err => {
         console.log("Failed to load projection 2070-2099", err);
       });
   };
+
+  @observable p2070Mean;
+  @action
+  setp2070Mean() {
+    const values = this.projectedData2070.map(year => Number(year[1]));
+    this.p2070Mean = Math.round(jStat.quantiles(values, [0.5]));
+  }
 
   @computed
   get projectedData2070Q() {
@@ -461,11 +460,13 @@ export default class AppStore {
 
   @computed
   get projection2070() {
+    const values = this.projectedData2070.map(year => Number(year[1]));
     let results = [];
     this.projectedData2070.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
-        "days above": Number(d[1])
+        "days above": Number(d[1]),
+        mean: Math.round(jStat.quantiles(values, [0.5]))
       });
     });
     return results;

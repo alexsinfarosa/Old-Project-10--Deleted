@@ -133,7 +133,10 @@ const renderActiveShape = props => {
 export default class Projections extends Component {
   render() {
     const {
+      temperature,
       selectedProjection,
+      p2040Mean,
+      p2070Mean,
       projection2070Index,
       projection2070,
       projectedData2070Q,
@@ -148,8 +151,10 @@ export default class Projections extends Component {
     let COLORS;
 
     let Q = projectedData2040Q;
+    let mean = p2040Mean;
     if (selectedProjection === "projection2070") {
       Q = projectedData2070Q;
+      mean = p2070Mean;
     }
 
     if (Q.length === 5) {
@@ -415,9 +420,14 @@ export default class Projections extends Component {
             iconType="rect"
             payload={[
               {
-                value: "Days above selected temperature",
+                value: `Days above ${temperature} ˚F`,
                 type: "rect",
                 color: "#ddd"
+              },
+              {
+                value: `Mean ${mean}`,
+                type: "line",
+                color: "#ff7300"
               }
             ]}
           />
@@ -429,12 +439,7 @@ export default class Projections extends Component {
               return <Cell key={i} fill="#ddd" />;
             })} */}
           </Bar>
-          <Line
-            type="monotone"
-            dataKey="daysAboveLastYear"
-            stroke="#8884d8"
-            dot={false}
-          />
+          <Line type="monotone" dataKey="mean" stroke="#ff7300" dot={false} />
         </ComposedChart>
       </div>
     );
