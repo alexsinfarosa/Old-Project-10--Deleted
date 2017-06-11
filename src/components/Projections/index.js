@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
+import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
 
-import { PieChart, Pie, Sector, Cell } from 'recharts';
+import { PieChart, Pie, Sector, Cell } from "recharts";
 import {
   ComposedChart,
   Bar,
@@ -10,10 +10,10 @@ import {
   Tooltip,
   Legend,
   Line
-} from 'recharts';
+} from "recharts";
 
 // components
-import CustomLabels from 'components/Graph/CustomLabels';
+import CustomLabels from "components/Graph/CustomLabels";
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -37,7 +37,7 @@ const renderCustomizedLabel = ({
       x={x}
       y={y}
       fill="black"
-      textAnchor={x > cx ? 'middle' : 'middle'}
+      textAnchor={x > cx ? "middle" : "middle"}
       dominantBaseline="central"
     >
       {payload.Q}
@@ -68,7 +68,7 @@ const renderActiveShape = props => {
   const my = cy + (outerRadius + 20) * sin;
   const ex = mx + (cos >= 0 ? 1 : -1) * 22;
   const ey = my;
-  const textAnchor = cos >= 0 ? 'start' : 'end';
+  const textAnchor = cos >= 0 ? "start" : "end";
 
   return (
     <g>
@@ -128,7 +128,7 @@ const renderActiveShape = props => {
   );
 };
 
-@inject('store')
+@inject("store")
 @observer
 export default class Projections extends Component {
   render() {
@@ -139,122 +139,220 @@ export default class Projections extends Component {
       projectedData2070Q,
       projection2040Index,
       projection2040,
-      projectedData2040Q
+      projectedData2040Q,
+      daysAboveLastYear
     } = this.props.store.app;
     const height = 300;
 
     let data = [];
     let COLORS;
-    if (selectedProjection === 'projection2040') {
-      if (projectedData2040Q.length === 5) {
+
+    let Q = projectedData2040Q;
+    if (selectedProjection === "projection2070") {
+      Q = projectedData2070Q;
+    }
+
+    if (Q.length === 5) {
+      if (daysAboveLastYear === Q[0]) {
         data = [
-          { name: 'Not Observed', value: 1, Q: projectedData2040Q[0] },
-          { name: 'Below', value: 1, Q: projectedData2040Q[1] },
-          { name: 'Slightly Below', value: 1, Q: projectedData2040Q[2] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: projectedData2040Q[3] },
-          { name: 'Above', value: 1, Q: projectedData2040Q[4] }
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Min" },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "Above", value: 1, Q: Q[4] }
         ];
         COLORS = [
-          '#292F36',
-          '#0088FE',
-          '#7FB069',
-          '#BFB649',
-          '#FFBB28',
-          '#E63B2E'
+          "#292F36",
+          "#155C9A",
+          "#0088FE",
+          "#7FB069",
+          "#FFBB28",
+          "#E63B2E"
         ];
-      }
-
-      if (projectedData2040Q.length === 4) {
+      } else if (daysAboveLastYear === Q[1]) {
         data = [
-          { name: 'Below', value: 1, Q: projectedData2040Q[0] },
-          { name: 'Slightly Below', value: 1, Q: projectedData2040Q[1] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: projectedData2040Q[2] },
-          { name: 'Above', value: 1, Q: projectedData2040Q[3] }
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "25%" },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "Above", value: 1, Q: Q[4] }
         ];
-        COLORS = ['#0088FE', '#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
-      }
-
-      if (projectedData2040Q.length === 3) {
+        COLORS = [
+          "#292F36",
+          "#0088FE",
+          "#409CB4",
+          "#7FB069",
+          "#FFBB28",
+          "#E63B2E"
+        ];
+      } else if (daysAboveLastYear === Q[2]) {
         data = [
-          { name: 'Slightly Below', value: 1, Q: projectedData2040Q[0] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: projectedData2040Q[1] },
-          { name: 'Above', value: 1, Q: projectedData2040Q[2] }
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "Above", value: 1, Q: Q[4] }
         ];
-        COLORS = ['#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
-      }
-
-      if (projectedData2040Q.length === 2) {
+        COLORS = [
+          "#292F36",
+          "#0088FE",
+          "#7FB069",
+          "#BFB649",
+          "#FFBB28",
+          "#E63B2E"
+        ];
+      } else if (daysAboveLastYear === Q[3]) {
         data = [
-          { name: 'Slightly Below', value: 1, Q: projectedData2040Q[0] },
-          { name: 'Mean' },
-          { name: 'Above', value: 1, Q: projectedData2040Q[1] }
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "75%" },
+          { name: "Above", value: 1, Q: Q[4] }
         ];
-        COLORS = ['#7FB069', '#F37B2B', '#E63B2E'];
-      }
-
-      if (projectedData2040Q.length === 1) {
-        data = [{ name: 'Not Observed', value: 1 }];
-        COLORS = ['#292F36'];
+        COLORS = [
+          "#292F36",
+          "#0088FE",
+          "#7FB069",
+          "#FFBB28",
+          "#F37B2B",
+          "#E63B2E"
+        ];
+      } else if (daysAboveLastYear === Q[4]) {
+        data = [
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "Above", value: 1, Q: Q[4] },
+          { name: "Max" }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E", "red"];
+      } else {
+        data = [
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "Above", value: 1, Q: Q[4] }
+        ];
+        COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
       }
     }
 
-    if (selectedProjection === 'projection2070' && projection2070.length > 0) {
-      if (projectedData2070Q.length === 5) {
+    if (Q.length === 4) {
+      if (daysAboveLastYear === Q[0]) {
         data = [
-          { name: 'Not Observed', value: 1, Q: projectedData2070Q[0] },
-          { name: 'Below', value: 1, Q: projectedData2070Q[1] },
-          { name: 'Slightly Below', value: 1, Q: projectedData2070Q[2] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: projectedData2070Q[3] },
-          { name: 'Above', value: 1, Q: projectedData2070Q[4] }
+          { name: "Below", value: 1, Q: Q[0] },
+          { name: "25%" },
+          { name: "Slightly Below", value: 1, Q: Q[1] },
+          { name: "Slightly Above", value: 1, Q: Q[2] },
+          { name: "Above", value: 1, Q: Q[3] }
         ];
-        COLORS = [
-          '#292F36',
-          '#0088FE',
-          '#7FB069',
-          '#BFB649',
-          '#FFBB28',
-          '#E63B2E'
-        ];
-      }
-
-      if (projectedData2070Q.length === 4) {
+        COLORS = ["#0088FE", "#409CB4", "#7FB069", "#FFBB28", "#E63B2E"];
+      } else if (daysAboveLastYear === Q[1]) {
         data = [
-          { name: 'Below', value: 1, Q: projectedData2070Q[0] },
-          { name: 'Slightly Below', value: 1, Q: projectedData2070Q[1] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: projectedData2070Q[2] },
-          { name: 'Above', value: 1, Q: projectedData2070Q[3] }
+          { name: "Below", value: 1, Q: Q[0] },
+          { name: "Slightly Below", value: 1, Q: Q[1] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[2] },
+          { name: "Above", value: 1, Q: Q[3] }
         ];
-        COLORS = ['#0088FE', '#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
-      }
-
-      if (projectedData2070Q.length === 3) {
+        COLORS = ["#0088FE", "#7FB069", "#BFB649", "#FFBB28", "#E63B2E"];
+      } else if (daysAboveLastYear === Q[2]) {
         data = [
-          { name: 'Slightly Below', value: 1, Q: projectedData2070Q[0] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: projectedData2070Q[1] },
-          { name: 'Above', value: 1, Q: projectedData2070Q[2] }
+          { name: "Below", value: 1, Q: Q[0] },
+          { name: "Slightly Below", value: 1, Q: Q[1] },
+          { name: "Slightly Above", value: 1, Q: Q[2] },
+          { name: "75%" },
+          { name: "Above", value: 1, Q: Q[3] }
         ];
-        COLORS = ['#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
-      }
-
-      if (projectedData2070Q.length === 2) {
+        COLORS = ["#0088FE", "#7FB069", "#FFBB28", "#F37B2B", "#E63B2E"];
+      } else if (daysAboveLastYear === Q[3]) {
         data = [
-          { name: 'Slightly Below', value: 1, Q: projectedData2070Q[0] },
-          { name: 'Mean' },
-          { name: 'Above', value: 1, Q: projectedData2070Q[1] }
+          { name: "Below", value: 1, Q: Q[0] },
+          { name: "Slightly Below", value: 1, Q: Q[1] },
+          { name: "Slightly Above", value: 1, Q: Q[2] },
+          { name: "Above", value: 1, Q: Q[3] },
+          { name: "Max" }
         ];
-        COLORS = ['#7FB069', '#F37B2B', '#E63B2E'];
+        COLORS = ["#0088FE", "#7FB069", "#FFBB28", "#E63B2E", "red"];
+      } else {
+        data = [
+          { name: "Below", value: 1, Q: Q[0] },
+          { name: "Slightly Below", value: 1, Q: Q[1] },
+          { name: "Slightly Above", value: 1, Q: Q[2] },
+          { name: "Above", value: 1, Q: Q[3] }
+        ];
+        COLORS = ["#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
       }
+    }
 
-      if (projectedData2070Q.length === 1) {
-        data = [{ name: 'Not Observed', value: 1 }];
-        COLORS = ['#292F36'];
+    if (Q.length === 3) {
+      if (daysAboveLastYear === Q[0]) {
+        data = [
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[1] },
+          { name: "Above", value: 1, Q: Q[2] }
+        ];
+        COLORS = ["#7FB069", "#BFB649", "#FFBB28", "#E63B2E"];
+      } else if (daysAboveLastYear === Q[1]) {
+        data = [
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Slightly Above", value: 1, Q: Q[1] },
+          { name: "75%" },
+          { name: "Above", value: 1, Q: Q[2] }
+        ];
+        COLORS = ["#7FB069", "#FFBB28", "#F37B2B", "#E63B2E"];
+      } else if (daysAboveLastYear === Q[2]) {
+        data = [
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Slightly Above", value: 1, Q: Q[1] },
+          { name: "Above", value: 1, Q: Q[2] },
+          { name: "Max" }
+        ];
+        COLORS = ["#7FB069", "#FFBB28", "#E63B2E", "red"];
+      } else {
+        data = [
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Slightly Above", value: 1, Q: Q[1] },
+          { name: "Above", value: 1, Q: Q[2] }
+        ];
+        COLORS = ["#7FB069", "#FFBB28", "#E63B2E"];
       }
+    }
+
+    if (Q.length === 2) {
+      if (daysAboveLastYear === Q[0]) {
+        data = [
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[1] }
+        ];
+        COLORS = ["#7FB069", "#BFB649", "#FFBB28"];
+      } else if (daysAboveLastYear === Q[1]) {
+        data = [
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Slightly Above", value: 1, Q: Q[1] },
+          { name: "Max" }
+        ];
+        COLORS = ["#7FB069", "#FFBB28", "red"];
+      } else {
+        data = [
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Slightly Above", value: 1, Q: Q[1] }
+        ];
+        COLORS = ["#7FB069", "#FFBB28"];
+      }
+    }
+
+    if (Q.length === 1) {
+      data = [{ name: "Not Observed", value: 1 }];
+      COLORS = ["#292F36"];
     }
 
     let cell = null;
@@ -265,7 +363,7 @@ export default class Projections extends Component {
     }
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+      <div style={{ display: "flex", justifyContent: "flex-start" }}>
         <PieChart
           // style={{ border: "1px solid red" }}
           width={500}
@@ -277,7 +375,7 @@ export default class Projections extends Component {
             cx={250}
             cy={height / 1.6}
             activeIndex={
-              selectedProjection === 'projection2040'
+              selectedProjection === "projection2040"
                 ? projection2040Index
                 : projection2070Index
             }
@@ -300,7 +398,7 @@ export default class Projections extends Component {
           width={600}
           height={height}
           data={
-            selectedProjection === 'projection2040'
+            selectedProjection === "projection2040"
               ? projection2040
               : projection2070
           }
@@ -317,9 +415,9 @@ export default class Projections extends Component {
             iconType="rect"
             payload={[
               {
-                value: 'Days above selected temperature',
-                type: 'rect',
-                color: '#ddd'
+                value: "Days above selected temperature",
+                type: "rect",
+                color: "#ddd"
               }
             ]}
           />
