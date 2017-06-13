@@ -52,7 +52,7 @@ export default class AppStore {
     const params = {
       sid: this.station.sid,
       // you can change back this to 1980-08-01
-      sdate: `1980-${format(new Date(), 'MM-DD')}`,
+      sdate: 'por', // this starts on July 1st
       edate: format(new Date(), 'YYYY-MM-DD'),
       elems: [
         {
@@ -70,6 +70,7 @@ export default class AppStore {
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
+        // console.log(res.data.data);
         this.setObservedData(res.data.data);
         this.setMean();
         this.setIsLoading(false);
@@ -144,7 +145,7 @@ export default class AppStore {
 
     if (Q.length === 3) {
       if (d < Q[0]) return 0;
-      if (d === Q[0]) return 0;
+      if (d === Q[0]) return 1;
       if (d > Q[0] && d <= Q[1]) return 1;
       if (d > Q[1]) return 2;
     }
@@ -273,7 +274,7 @@ export default class AppStore {
 
     if (Q.length === 3) {
       if (d < Q[0]) return 0;
-      if (d === Q[0]) return 0;
+      if (d === Q[0]) return 1;
       if (d > Q[0] && d <= Q[1]) return 1;
       if (d > Q[1]) return 2;
     }
@@ -402,7 +403,7 @@ export default class AppStore {
 
     if (Q.length === 3) {
       if (d < Q[0]) return 0;
-      if (d === Q[0]) return 0;
+      if (d === Q[0]) return 1;
       if (d > Q[0] && d <= Q[1]) return 1;
       if (d > Q[1]) return 2;
     }
