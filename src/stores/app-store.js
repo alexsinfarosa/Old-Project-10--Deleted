@@ -70,7 +70,7 @@ export default class AppStore {
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        // console.log(res.data.data);
+        console.log(res.data.data);
         this.setObservedData(res.data.data);
         this.setMean();
         this.setIsLoading(false);

@@ -35,7 +35,7 @@ class App extends Component {
       case 0:
         return (
           <Header>
-            This year there have been no days above {temperature}˚F{' '}
+            This year there have been zero days above {temperature}˚F{' '}
           </Header>
         );
       case 1:
