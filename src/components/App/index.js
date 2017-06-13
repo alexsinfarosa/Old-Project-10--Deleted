@@ -1,20 +1,20 @@
-import React, { Component } from "react";
-import { inject, observer } from "mobx-react";
-import { when } from "mobx";
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { when } from 'mobx';
 
-import { Spin } from "antd";
+import { Spin } from 'antd';
 
 // components
-import AppMenu from "components/AppMenu";
-import AppSlider from "components/AppSlider";
-import Observed from "components/Observed";
-import ProjectionButtons from "components/ProjectionButtons";
-import Projections from "components/Projections";
+import AppMenu from 'components/AppMenu';
+import AppSlider from 'components/AppSlider';
+import Observed from 'components/Observed';
+import ProjectionButtons from 'components/ProjectionButtons';
+import Projections from 'components/Projections';
 
 // styled-components
-import { Page, Header } from "./styles";
+import { Page, Header } from './styles';
 
-@inject("store")
+@inject('store')
 @observer
 class App extends Component {
   constructor(props) {
@@ -29,13 +29,33 @@ class App extends Component {
     this.props.store.app.loadProjection2070();
   };
 
+  notification = () => {
+    const { daysAboveLastYear, temperature } = this.props.store.app;
+    switch (daysAboveLastYear) {
+      case 0:
+        return (
+          <Header>
+            This year there have been no days above {temperature}˚F{' '}
+          </Header>
+        );
+      case 1:
+        return (
+          <Header>
+            This year there has been {daysAboveLastYear} day above {temperature}˚F{' '}
+          </Header>
+        );
+      default:
+        return (
+          <Header>
+            This year there have been {daysAboveLastYear} days above{' '}
+            {temperature}˚F{' '}
+          </Header>
+        );
+    }
+  };
+
   render() {
-    const {
-      temperature,
-      daysAboveLastYear,
-      isLoading,
-      isPLoading
-    } = this.props.store.app;
+    const { isLoading, isPLoading } = this.props.store.app;
 
     return (
       <Page>
@@ -45,18 +65,11 @@ class App extends Component {
         <AppSlider />
         <br />
 
-        {daysAboveLastYear > 0
-          ? <Header>
-              This year there have been {daysAboveLastYear} days above{" "}
-              {temperature}˚F{" "}
-            </Header>
-          : <Header>
-              This year there have been no days above {temperature}˚F
-            </Header>}
+        {this.notification()}
 
         {/* <h3>Number of days {daysAboveLastYear}</h3> */}
         <br />
-        <Observed />
+        {isLoading ? null : <Observed />}
 
         <br />
         {isLoading ? null : <ProjectionButtons />}
