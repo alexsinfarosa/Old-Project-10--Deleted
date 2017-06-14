@@ -2,6 +2,7 @@ import { observable, action, computed } from 'mobx';
 import { stations } from 'stations';
 import { jStat } from 'jStat';
 import format from 'date-fns/format';
+import addDays from 'date-fns/add_days';
 import axios from 'axios';
 
 // import Uniq from "lodash/uniq";
@@ -49,23 +50,27 @@ export default class AppStore {
   @action
   loadObservedData = () => {
     this.setIsLoading(true);
+    const seasonStart = format(addDays(new Date(), 1), 'MM-DD');
+    console.log(seasonStart);
     const params = {
       sid: this.station.sid,
       // you can change back this to 1980-08-01
-      sdate: 'por', // this starts on July 1st
+      sdate: `POR-${format(new Date(), 'MM-DD')}`,
       edate: format(new Date(), 'YYYY-MM-DD'),
       elems: [
         {
           name: 'maxt',
           interval: [1, 0, 0],
           duration: 'std',
-          season_start: '01-01',
-          reduce: `cnt_ge_${this.temperature}`
+          season_start: seasonStart,
+          reduce: `cnt_ge_${this.temperature}`,
+          add: 'mcnt',
+          maxmissing: 10
         }
       ]
     };
 
-    // console.log(params);
+    console.log(params);
 
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)

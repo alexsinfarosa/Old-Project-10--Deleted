@@ -278,6 +278,7 @@ export default class Observed extends Component {
                   outerRadius={110}
                   innerRadius={90}
                   paddingAngle={3}
+                  // label
                 >
                   {cell}
                 </Pie>
