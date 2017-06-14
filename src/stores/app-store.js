@@ -63,9 +63,9 @@ export default class AppStore {
           interval: [1, 0, 0],
           duration: 'std',
           season_start: seasonStart,
-          reduce: `cnt_ge_${this.temperature}`,
-          add: 'mcnt',
-          maxmissing: 10
+          reduce: `cnt_ge_${this.temperature}`
+          // add: 'mcnt',
+          // maxmissing: 10
         }
       ]
     };
