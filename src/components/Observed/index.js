@@ -103,7 +103,8 @@ export default class Observed extends Component {
       observed,
       observedIndex,
       observedQ,
-      daysAboveLastYear
+      daysAboveLastYear,
+      isHistogram
     } = this.props.store.app;
     const height = 300;
 
@@ -284,51 +285,51 @@ export default class Observed extends Component {
                 </Pie>
                 <Legend />
               </PieChart>
-
-              <ComposedChart
-                // style={{ border: "1px solid green" }}
-                width={600}
-                height={height}
-                data={observed}
-                // margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
-              >
-                <XAxis dataKey="year" tick={<CustomLabels />} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Legend
-                  verticalAlign="top"
-                  align="right"
-                  height={36}
-                  iconSize={18}
-                  iconType="rect"
-                  payload={[
-                    {
-                      value: `Days above ${temperature} ˚F`,
-                      type: 'rect',
-                      color: '#ddd'
-                    },
-                    {
-                      value: `Mean ${mean}`,
-                      type: 'line',
-                      color: '#ff7300'
-                    }
-                  ]}
-                />
-                <Bar dataKey="days above">
-                  {observed.map((e, i) => {
-                    if (i === observed.length - 1) {
-                      return <Cell key={i} fill={COLORS[observedIndex]} />;
-                    }
-                    return <Cell key={i} fill="#ddd" />;
-                  })}
-                </Bar>
-                <Line
-                  type="monotone"
-                  dataKey="mean"
-                  stroke="#ff7300"
-                  dot={false}
-                />
-              </ComposedChart>
+              {isHistogram &&
+                <ComposedChart
+                  // style={{ border: "1px solid green" }}
+                  width={600}
+                  height={height}
+                  data={observed}
+                  // margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
+                >
+                  <XAxis dataKey="year" tick={<CustomLabels />} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Legend
+                    verticalAlign="top"
+                    align="right"
+                    height={36}
+                    iconSize={18}
+                    iconType="rect"
+                    payload={[
+                      {
+                        value: `Days above ${temperature} ˚F`,
+                        type: 'rect',
+                        color: '#ddd'
+                      },
+                      {
+                        value: `Mean ${mean}`,
+                        type: 'line',
+                        color: '#ff7300'
+                      }
+                    ]}
+                  />
+                  <Bar dataKey="days above">
+                    {observed.map((e, i) => {
+                      if (i === observed.length - 1) {
+                        return <Cell key={i} fill={COLORS[observedIndex]} />;
+                      }
+                      return <Cell key={i} fill="#ddd" />;
+                    })}
+                  </Bar>
+                  <Line
+                    type="monotone"
+                    dataKey="mean"
+                    stroke="#ff7300"
+                    dot={false}
+                  />
+                </ComposedChart>}
             </div>
           : <Spin />}
       </div>

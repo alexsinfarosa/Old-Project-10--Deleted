@@ -20,6 +20,9 @@ export default class AppStore {
   @observable selectedProjection = 'projection2040';
   @action setProjection = d => (this.selectedProjection = d);
 
+  @observable isHistogram = false;
+  @action setIsHistogram = d => (this.isHistogram = d);
+
   // Stations -----------------------------------------------------------------------
   @observable
   station = JSON.parse(localStorage.getItem('gauge-stations')) || stations[0];
@@ -51,7 +54,7 @@ export default class AppStore {
   loadObservedData = () => {
     this.setIsLoading(true);
     const seasonStart = format(addDays(new Date(), 1), 'MM-DD');
-    console.log(seasonStart);
+
     const params = {
       sid: this.station.sid,
       // you can change back this to 1980-08-01
@@ -70,12 +73,12 @@ export default class AppStore {
       ]
     };
 
-    console.log(params);
+    // console.log(params);
 
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         this.setObservedData(res.data.data);
         this.setMean();
         this.setIsLoading(false);
@@ -103,7 +106,7 @@ export default class AppStore {
     const values = this.observedData.map(year => Number(year[1]));
     let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]); // min,25,50,75,100
     Q = Q.map(q => Math.round(q));
-    console.log(`Original ${Q}`);
+    console.log(`Observed ${Q}`);
     if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3] && Q[3] === Q[4]) {
       console.log(`100 ${Q}`);
       return [Q[4]]; // 100
@@ -232,7 +235,9 @@ export default class AppStore {
     const values = this.projectedData2040.map(year => Number(year[1]));
     let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]); // min,25,50,75,100
     Q = Q.map(q => Math.round(q));
-    console.log(`projection2040 ${Q}`);
+
+    if (!Q.includes(NaN)) console.log(`projection2040 ${Q}`);
+
     if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3] && Q[3] === Q[4]) {
       console.log(`100 ${Q}`);
       return [Q[4]]; // 100
@@ -361,7 +366,9 @@ export default class AppStore {
     const values = this.projectedData2070.map(year => Number(year[1]));
     let Q = jStat.quantiles(values, [0, 0.25, 0.5, 0.75, 1]); // min,25,50,75,100
     Q = Q.map(q => Math.round(q));
-    console.log(`projection2070 ${Q}`);
+
+    if (!Q.includes(NaN)) console.log(`projection2070 ${Q}`);
+
     if (Q[0] === Q[1] && Q[1] === Q[2] && Q[2] === Q[3] && Q[3] === Q[4]) {
       console.log(`100 ${Q}`);
       return [Q[4]]; // 100

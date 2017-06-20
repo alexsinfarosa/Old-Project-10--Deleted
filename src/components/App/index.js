@@ -13,6 +13,7 @@ import Projections from 'components/Projections';
 
 // styled-components
 import { Page, Header } from './styles';
+import { Button } from 'antd';
 
 @inject('store')
 @observer
@@ -55,7 +56,7 @@ class App extends Component {
   };
 
   render() {
-    const { isLoading, isPLoading } = this.props.store.app;
+    const { isLoading, isPLoading, isHistogram } = this.props.store.app;
 
     return (
       <Page>
@@ -66,6 +67,20 @@ class App extends Component {
         <br />
 
         {this.notification()}
+        <br />
+        {isHistogram
+          ? <Button
+              type="default"
+              onClick={() => this.props.store.app.setIsHistogram(false)}
+            >
+              Hide Time Series
+            </Button>
+          : <Button
+              type="default"
+              onClick={() => this.props.store.app.setIsHistogram(true)}
+            >
+              Display Time Series
+            </Button>}
 
         {/* <h3>Number of days {daysAboveLastYear}</h3> */}
         <br />

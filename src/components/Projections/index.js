@@ -113,7 +113,8 @@ export default class Projections extends Component {
       projection2040Index,
       projection2040,
       projectedData2040Q,
-      daysAboveLastYear
+      daysAboveLastYear,
+      isHistogram
     } = this.props.store.app;
     const height = 300;
 
@@ -304,49 +305,50 @@ export default class Projections extends Component {
           <Legend />
         </PieChart>
 
-        <ComposedChart
-          // style={{ border: "1px solid green" }}
-          width={600}
-          height={height}
-          data={
-            selectedProjection === 'projection2040'
-              ? projection2040
-              : projection2070
-          }
-          // margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
-        >
-          <XAxis dataKey="year" tick={<CustomLabels />} />
-          <YAxis allowDecimals={false} />
-          <Tooltip />
-          <Legend
-            verticalAlign="top"
-            align="right"
-            height={36}
-            iconSize={18}
-            iconType="rect"
-            payload={[
-              {
-                value: `Days above ${temperature} ˚F`,
-                type: 'rect',
-                color: '#ddd'
-              },
-              {
-                value: `Mean ${mean}`,
-                type: 'line',
-                color: '#ff7300'
-              }
-            ]}
-          />
-          <Bar dataKey="days above" fill="#ddd">
-            {/* {projection2040.map((e, i) => {
+        {isHistogram &&
+          <ComposedChart
+            // style={{ border: "1px solid green" }}
+            width={600}
+            height={height}
+            data={
+              selectedProjection === 'projection2040'
+                ? projection2040
+                : projection2070
+            }
+            // margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
+          >
+            <XAxis dataKey="year" tick={<CustomLabels />} />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Legend
+              verticalAlign="top"
+              align="right"
+              height={36}
+              iconSize={18}
+              iconType="rect"
+              payload={[
+                {
+                  value: `Days above ${temperature} ˚F`,
+                  type: 'rect',
+                  color: '#ddd'
+                },
+                {
+                  value: `Mean ${mean}`,
+                  type: 'line',
+                  color: '#ff7300'
+                }
+              ]}
+            />
+            <Bar dataKey="days above" fill="#ddd">
+              {/* {projection2040.map((e, i) => {
               if (i === projection2040.length - 1) {
                 return <Cell key={i} fill={e.barColor} />;
               }
               return <Cell key={i} fill="#ddd" />;
             })} */}
-          </Bar>
-          <Line type="monotone" dataKey="mean" stroke="#ff7300" dot={false} />
-        </ComposedChart>
+            </Bar>
+            <Line type="monotone" dataKey="mean" stroke="#ff7300" dot={false} />
+          </ComposedChart>}
       </div>
     );
   }
