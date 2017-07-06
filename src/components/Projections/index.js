@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
+import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
 
-import { PieChart, Pie, Sector, Cell } from 'recharts';
+import { PieChart, Pie, Sector, Cell } from "recharts";
 import {
   ComposedChart,
   Bar,
@@ -10,10 +10,10 @@ import {
   Tooltip,
   Legend,
   Line
-} from 'recharts';
+} from "recharts";
 
 // components
-import CustomLabels from 'components/Graph/CustomLabels';
+import CustomLabels from "components/Graph/CustomLabels";
 
 const renderActiveShape = props => {
   const RADIAN = Math.PI / 180;
@@ -38,7 +38,7 @@ const renderActiveShape = props => {
   const my = cy + (outerRadius + 20) * sin;
   const ex = mx + (cos >= 0 ? 1 : -1) * 22;
   const ey = my;
-  const textAnchor = cos >= 0 ? 'start' : 'end';
+  const textAnchor = cos >= 0 ? "start" : "end";
 
   return (
     <g>
@@ -98,7 +98,7 @@ const renderActiveShape = props => {
   );
 };
 
-@inject('store')
+@inject("store")
 @observer
 export default class Projections extends Component {
   render() {
@@ -150,7 +150,7 @@ export default class Projections extends Component {
             x={!normal ? x : x + 4}
             y={y}
             fill="black"
-            textAnchor={x > cx ? 'middle' : 'middle'}
+            textAnchor={x > cx ? "middle" : "middle"}
             dominantBaseline="central"
           >
             {payload.Q}
@@ -166,7 +166,7 @@ export default class Projections extends Component {
 
     let Q = projectedData2040Q;
     let mean = p2040Mean;
-    if (selectedProjection === 'projection2070') {
+    if (selectedProjection === "projection2070") {
       Q = projectedData2070Q;
       mean = p2070Mean;
     }
@@ -175,30 +175,30 @@ export default class Projections extends Component {
       if (daysAboveLastYear === Q[2]) {
         normal = true;
         data = [
-          { name: 'Not Observed', value: 1, Q: Q[0] },
-          { name: 'Below', value: 1, Q: Q[1] },
-          { name: 'Slightly Below', value: 1, Q: Q[2] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: Q[3] },
-          { name: 'Above', value: 1, Q: Q[4] }
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "Above", value: 1, Q: Q[4] }
         ];
         COLORS = [
-          '#292F36',
-          '#0088FE',
-          '#7FB069',
-          '#BFB649',
-          '#FFBB28',
-          '#E63B2E'
+          "#292F36",
+          "#0088FE",
+          "#7FB069",
+          "#BFB649",
+          "#FFBB28",
+          "#E63B2E"
         ];
       } else {
         data = [
-          { name: 'Not Observed', value: 1, Q: Q[0] },
-          { name: 'Below', value: 1, Q: Q[1] },
-          { name: 'Slightly Below', value: 1, Q: Q[2] },
-          { name: 'Slightly Above', value: 1, Q: Q[3] },
-          { name: 'Above', value: 1, Q: Q[4] }
+          { name: "Not Observed", value: 1, Q: Q[0] },
+          { name: "Below", value: 1, Q: Q[1] },
+          { name: "Slightly Below", value: 1, Q: Q[2] },
+          { name: "Slightly Above", value: 1, Q: Q[3] },
+          { name: "Above", value: 1, Q: Q[4] }
         ];
-        COLORS = ['#292F36', '#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
+        COLORS = ["#292F36", "#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
       }
     }
 
@@ -206,21 +206,21 @@ export default class Projections extends Component {
       if (daysAboveLastYear === Q[1]) {
         normal = true;
         data = [
-          { name: 'Below', value: 1, Q: Q[0] },
-          { name: 'Slightly Below', value: 1, Q: Q[1] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: Q[2] },
-          { name: 'Above', value: 1, Q: Q[3] }
+          { name: "Below", value: 1, Q: Q[0] },
+          { name: "Slightly Below", value: 1, Q: Q[1] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[2] },
+          { name: "Above", value: 1, Q: Q[3] }
         ];
-        COLORS = ['#0088FE', '#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
+        COLORS = ["#0088FE", "#7FB069", "#BFB649", "#FFBB28", "#E63B2E"];
       } else {
         data = [
-          { name: 'Below', value: 1, Q: Q[0] },
-          { name: 'Slightly Below', value: 1, Q: Q[1] },
-          { name: 'Slightly Above', value: 1, Q: Q[2] },
-          { name: 'Above', value: 1, Q: Q[3] }
+          { name: "Below", value: 1, Q: Q[0] },
+          { name: "Slightly Below", value: 1, Q: Q[1] },
+          { name: "Slightly Above", value: 1, Q: Q[2] },
+          { name: "Above", value: 1, Q: Q[3] }
         ];
-        COLORS = ['#0088FE', '#7FB069', '#FFBB28', '#E63B2E'];
+        COLORS = ["#0088FE", "#7FB069", "#FFBB28", "#E63B2E"];
       }
     }
 
@@ -228,19 +228,19 @@ export default class Projections extends Component {
       if (daysAboveLastYear === Q[0]) {
         normal = true;
         data = [
-          { name: 'Slightly Below', value: 1, Q: Q[0] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: Q[1] },
-          { name: 'Above', value: 1, Q: Q[2] }
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[1] },
+          { name: "Above", value: 1, Q: Q[2] }
         ];
-        COLORS = ['#7FB069', '#BFB649', '#FFBB28', '#E63B2E'];
+        COLORS = ["#7FB069", "#BFB649", "#FFBB28", "#E63B2E"];
       } else {
         data = [
-          { name: 'Slightly Below', value: 1, Q: Q[0] },
-          { name: 'Slightly Above', value: 1, Q: Q[1] },
-          { name: 'Above', value: 1, Q: Q[2] }
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Slightly Above", value: 1, Q: Q[1] },
+          { name: "Above", value: 1, Q: Q[2] }
         ];
-        COLORS = ['#7FB069', '#FFBB28', '#E63B2E'];
+        COLORS = ["#7FB069", "#FFBB28", "#E63B2E"];
       }
     }
 
@@ -248,23 +248,23 @@ export default class Projections extends Component {
       if (daysAboveLastYear === Q[0]) {
         normal = true;
         data = [
-          { name: 'Slightly Below', value: 1, Q: Q[0] },
-          { name: 'Normal' },
-          { name: 'Slightly Above', value: 1, Q: Q[1] }
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Normal" },
+          { name: "Slightly Above", value: 1, Q: Q[1] }
         ];
-        COLORS = ['#7FB069', '#BFB649', '#FFBB28'];
+        COLORS = ["#7FB069", "#BFB649", "#FFBB28"];
       } else {
         data = [
-          { name: 'Slightly Below', value: 1, Q: Q[0] },
-          { name: 'Slightly Above', value: 1, Q: Q[1] }
+          { name: "Slightly Below", value: 1, Q: Q[0] },
+          { name: "Slightly Above", value: 1, Q: Q[1] }
         ];
-        COLORS = ['#7FB069', '#FFBB28'];
+        COLORS = ["#7FB069", "#FFBB28"];
       }
     }
 
     if (Q.length === 1) {
-      data = [{ name: 'Not Observed', value: 1 }];
-      COLORS = ['#292F36'];
+      data = [{ name: "Not Observed", value: 1 }];
+      COLORS = ["#292F36"];
     }
 
     let cell = null;
@@ -275,7 +275,13 @@ export default class Projections extends Component {
     }
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-start",
+          marginBottom: "2rem"
+        }}
+      >
         <PieChart
           // style={{ border: "1px solid red" }}
           width={500}
@@ -287,7 +293,7 @@ export default class Projections extends Component {
             cx={250}
             cy={height / 1.6}
             activeIndex={
-              selectedProjection === 'projection2040'
+              selectedProjection === "projection2040"
                 ? projection2040Index
                 : projection2070Index
             }
@@ -311,7 +317,7 @@ export default class Projections extends Component {
             width={600}
             height={height}
             data={
-              selectedProjection === 'projection2040'
+              selectedProjection === "projection2040"
                 ? projection2040
                 : projection2070
             }
@@ -329,13 +335,13 @@ export default class Projections extends Component {
               payload={[
                 {
                   value: `Days above ${temperature} ˚F`,
-                  type: 'rect',
-                  color: '#ddd'
+                  type: "rect",
+                  color: "#ddd"
                 },
                 {
                   value: `Mean ${mean}`,
-                  type: 'line',
-                  color: '#ff7300'
+                  type: "line",
+                  color: "#ff7300"
                 }
               ]}
             />
